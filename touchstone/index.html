@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Touchstone: Daily Word Puzzle</title>
+  <meta name="description" content="A calm daily word puzzle for iPhone and iPad. Find the hidden word chains, slide them into place, and watch them light up. Free to play every day.">
+  <meta name="theme-color" content="#fbf6ec" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#161513" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="/touchstone/media/icon.png">
+  <link rel="apple-touch-icon" href="/touchstone/media/icon.png">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Touchstone: Daily Word Puzzle">
+  <meta property="og:description" content="Find the hidden word chains, slide them into place, and watch them light up. A new puzzle every day.">
+  <meta property="og:url" content="https://ddworkin.github.io/touchstone/">
+  <meta property="og:image" content="https://ddworkin.github.io/touchstone/media/links.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="stylesheet" href="/touchstone/landing.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="wrap brand">
+  <img src="/touchstone/media/icon.png" alt="" width="44" height="44">
+  <span>Touchstone</span>
+</header>
+
+<main id="main">
+
+  <!-- Hero -->
+  <section class="wrap hero" aria-labelledby="hero-title">
+    <div>
+      <p class="eyebrow">A daily word puzzle for iPhone and iPad</p>
+      <h1 id="hero-title">Slide the words.<br>Light up the chain.</h1>
+      <p class="lede">Every tile is a word, and hidden among them are chains where each word leads to the next. Slide them together, watch the links glow, and clear the board.</p>
+      <div class="chain" aria-label="Example chain: kettle, boil, tea, cup">
+        <span class="tile lit">KETTLE</span><span class="arrow" aria-hidden="true">→</span>
+        <span class="tile lit">BOIL</span><span class="arrow" aria-hidden="true">→</span>
+        <span class="tile lit">TEA</span><span class="arrow" aria-hidden="true">→</span>
+        <span class="tile lit">CUP</span>
+      </div>
+      <div class="actions">
+        <a class="btn btn-primary" href="#beta">Try it early</a>
+        <a class="btn btn-secondary" href="#how">How it plays</a>
+      </div>
+    </div>
+    <div>
+      <div class="phone">
+        <video id="gameplay" muted loop playsinline preload="metadata"
+               poster="/touchstone/media/gameplay-poster.jpg" width="600" height="1304"
+               aria-label="A puzzle being solved: tiles swap, linked words glow, and each finished chain clears into a row at the bottom until the board is solved.">
+          <source src="/touchstone/media/gameplay.mp4" type="video/mp4">
+        </video>
+        <button class="video-toggle" id="video-toggle" type="button" aria-label="Play gameplay video" hidden>▶</button>
+      </div>
+      <p class="caption">A full puzzle, solved in 7 moves.</p>
+    </div>
+  </section>
+
+  <!-- How it plays -->
+  <section id="how" class="wrap" aria-labelledby="how-title">
+    <p class="eyebrow">How it plays</p>
+    <h2 id="how-title">Easy to learn. Satisfying to solve.</h2>
+    <p class="lede">No typing, no timer, no guessing letters. Just you, sixteen words, and a few hidden chains.</p>
+    <ol class="steps">
+      <li>
+        <span class="step-num" aria-hidden="true">1</span>
+        <div>
+          <h3>Spot the chains</h3>
+          <p>Most puzzles hide four chains of four words, each one step after the last, like DIRTY → WASH → DRY → FOLD. Every word belongs to exactly one.</p>
+        </div>
+        <div class="phone sm"><img src="/touchstone/media/start.jpg" width="600" height="1304" loading="lazy" decoding="async"
+          alt="A scrambled four-by-four board of word tiles: fold, boil, wash, story, sprout, dirty, cup, seed, dry, flower, bath, tea, kettle, fruit, sleep, pajamas. Flower and fruit glow orange."></div>
+        <p class="shot-note">A fresh board. FLOWER and FRUIT already touch, so they start out glowing.</p>
+      </li>
+      <li>
+        <span class="step-num" aria-hidden="true">2</span>
+        <div>
+          <h3>Slide them together</h3>
+          <p>Swap neighboring tiles or drag a word along a path. When two linked words touch, they glow and join up.</p>
+        </div>
+        <div class="phone sm"><img src="/touchstone/media/links.jpg" width="600" height="1304" loading="lazy" decoding="async"
+          alt="After one move: cup has swapped places with seed and now sits above tea, and the pair glows green."></div>
+        <p class="shot-note">One swap: CUP trades places with SEED, lands next to TEA, and the pair lights up.</p>
+      </li>
+      <li>
+        <span class="step-num" aria-hidden="true">3</span>
+        <div>
+          <h3>Clear the board</h3>
+          <p>Finish a chain and it bursts, then settles into a solved row at the bottom. Clear them all to win.</p>
+        </div>
+        <div class="phone sm"><img src="/touchstone/media/clear.jpg" width="600" height="1304" loading="lazy" decoding="async"
+          alt="Seed, sprout, flower, fruit docked as a solved row at the bottom while other pairs glow above it."></div>
+        <p class="shot-note">SEED → SPROUT → FLOWER → FRUIT is complete, so it clears into a solved row.</p>
+      </li>
+    </ol>
+  </section>
+
+  <!-- Daily ritual -->
+  <section class="wrap" aria-labelledby="daily-title">
+    <div class="feature">
+      <div>
+        <p class="eyebrow">A new puzzle every day</p>
+        <h2 id="daily-title">Your three-minute morning ritual</h2>
+        <p class="lede">Everyone gets the same puzzle each day, so you can compare notes with friends.</p>
+        <ul>
+          <li><strong>Easy Monday, hardest Sunday.</strong> The week ramps up, so there's always a warm-up and always a challenge.</li>
+          <li><strong>Streaks</strong> with a flame that grows every day you play.</li>
+          <li><strong>Share your solve</strong> as a colorful card with your move count.</li>
+          <li><strong>"Why these words?"</strong> After you solve, see how each chain connects.</li>
+          <li><strong>Watch your last solve</strong> replayed move by move.</li>
+        </ul>
+      </div>
+      <div class="duo">
+        <div class="phone sm"><img src="/touchstone/media/home.jpg" width="600" height="1304" loading="lazy" decoding="async"
+          alt="Today screen: puzzle number 142, a twelve-day streak flame, a Play button, and a Rush Mode card."></div>
+        <div class="phone sm"><img src="/touchstone/media/win.jpg" width="600" height="1304" loading="lazy" decoding="async"
+          alt="Win screen: Cleared! in 7 moves, a quick solve, a share card with four colored bars, and a Why these words section."></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Shapes and mazes -->
+  <section class="wrap" aria-labelledby="shapes-title">
+    <p class="eyebrow">Not just straight lines</p>
+    <h2 id="shapes-title">Special shapes and stone mazes</h2>
+    <p class="lede">Some days the chain isn't a line. A hub word connects to three others; a cycle loops back on itself. And on stone days, you slide words through a maze of fixed stones.</p>
+    <ul class="gallery" tabindex="0" aria-label="Special puzzle types, swipe to see more">
+      <li><figure>
+        <div class="phone"><img src="/touchstone/media/shape-hub.jpg" width="600" height="1304" loading="lazy" decoding="async"
+          alt="A hub: storm in the middle connects to wind, thunder, and flood, lit up in a T shape as it clears."></div>
+        <figcaption><strong>Hubs</strong>One word at the center, three around it.</figcaption>
+      </figure></li>
+      <li><figure>
+        <div class="phone"><img src="/touchstone/media/shape-cycle.jpg" width="600" height="1304" loading="lazy" decoding="async"
+          alt="A cycle: chick, hen, egg, and nest form a closed, glowing square."></div>
+        <figcaption><strong>Cycles</strong>Four words in a loop that has to close.</figcaption>
+      </figure></li>
+      <li><figure>
+        <div class="phone"><img src="/touchstone/media/stones.jpg" width="600" height="1304" loading="lazy" decoding="async"
+          alt="A stone maze: brick-like stones fixed in place, with word tiles and empty spaces to slide them into."></div>
+        <figcaption><strong>Stone mazes</strong>Slide words into the gaps around fixed stones.</figcaption>
+      </figure></li>
+      <li><figure>
+        <div class="phone"><img src="/touchstone/media/shape-coach.jpg" width="600" height="1304" loading="lazy" decoding="async"
+          alt="A short tutorial card explaining a hub before the puzzle starts."></div>
+        <figcaption><strong>Never an ambush</strong>A quick tip the first time you meet each shape.</figcaption>
+      </figure></li>
+    </ul>
+  </section>
+
+  <!-- Seasons -->
+  <section class="wrap" aria-labelledby="seasons-title">
+    <div class="feature flip">
+      <div>
+        <p class="eyebrow">Seasons and holidays</p>
+        <h2 id="seasons-title">Boards that dress for the occasion</h2>
+        <p class="lede">Themed puzzles bring their own look: rolling hills for a day outside, frost for a snow day, warm wood for the workshop, and special skins for holidays through the year.</p>
+      </div>
+      <div class="phone sm"><img src="/touchstone/media/themed.jpg" width="600" height="1304" loading="lazy" decoding="async"
+        alt="A countryside-themed board over green hills, with cow, milk, butter, and toast docked as a solved row."></div>
+    </div>
+  </section>
+
+  <!-- Play more -->
+  <section class="wrap" aria-labelledby="more-title">
+    <div class="feature">
+      <div>
+        <p class="eyebrow">Can't wait for tomorrow?</p>
+        <h2 id="more-title">Play as much as you like</h2>
+        <ul>
+          <li><strong>Collections:</strong> over 100 hand-checked bonus puzzles in themed packs, from gentle warm-ups to bigger boards, stone mazes, and a lab of special shapes.</li>
+          <li><strong>Rush Mode:</strong> 90 seconds on a stone maze. New chains drop in as you clear them; how many can you get?</li>
+          <li><strong>The archive:</strong> every past daily, with a calendar of what you've solved.</li>
+        </ul>
+      </div>
+      <div class="duo">
+        <div class="phone sm"><img src="/touchstone/media/library.jpg" width="600" height="1304" loading="lazy" decoding="async"
+          alt="Library screen: the daily archive with this week's days, and the first Collections."></div>
+        <div class="phone sm"><img src="/touchstone/media/collections.jpg" width="600" height="1304" loading="lazy" decoding="async"
+          alt="More Collections: Everyday, Nature and Weather, Process Lab, Mind and Body, Wide Open, Stone Routes, Deep Winter, and Topology Lab."></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Extras -->
+  <section class="wrap" aria-labelledby="extras-title">
+    <p class="eyebrow">The little things</p>
+    <h2 id="extras-title">Made for iPhone and iPad</h2>
+    <ul class="extras">
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="18" height="8" rx="2"/></svg>
+        <div><strong>Widgets</strong><span>Home Screen, Lock Screen, and StandBy show today's puzzle and your streak.</span></div></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3a4 4 0 0 1 4 4v4a4 4 0 0 1-8 0V7a4 4 0 0 1 4-4z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+        <div><strong>Siri and Shortcuts</strong><span>"Play today's Touchstone," or ask for your streak without opening the app.</span></div></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="4"/><circle cx="12" cy="12" r="3"/></svg>
+        <div><strong>Control Center and Action Button</strong><span>One press jumps straight into today's puzzle.</span></div></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M7 18a4 4 0 0 1-.6-8A6 6 0 0 1 18 9a4.5 4.5 0 0 1-.5 9z"/></svg>
+        <div><strong>iCloud sync</strong><span>Your streak and solves follow you between iPhone and iPad. Free, always.</span></div></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>
+        <div><strong>Gentle reminders</strong><span>An optional morning nudge, and an evening one only if your streak is on the line.</span></div></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"/></svg>
+        <div><strong>Streak Shields</strong><span>Missed a day? A shield you earn every month keeps your streak alive.</span></div></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-2"/></svg>
+        <div><strong>Unlimited undo</strong><span>Experiment freely. Undo is never rationed or sold.</span></div></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="5" r="2"/><path d="M5 9l7 2 7-2M12 11v4l-3 6M12 15l3 6"/></svg>
+        <div><strong>Accessible</strong><span>VoiceOver describes every link, and Reduce Motion calms the effects.</span></div></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+        <div><strong>No ads, no tracking</strong><span>No account, no data collected. <a href="/touchstone/privacy/">Privacy policy</a></span></div></li>
+    </ul>
+  </section>
+
+  <!-- Pricing -->
+  <section class="wrap" aria-labelledby="price-title">
+    <p class="eyebrow">Free to play</p>
+    <h2 id="price-title">The daily puzzle is always free</h2>
+    <div class="plans">
+      <div class="plan">
+        <h3>Free <span class="price">forever</span></h3>
+        <ul>
+          <li>Today's puzzle, every day</li>
+          <li>Streaks, Streak Shields, and sharing</li>
+          <li>The last 3 days of the archive</li>
+          <li>Warm-up puzzles and a free sampler from the Collections</li>
+          <li>One Rush run a day</li>
+          <li>Widgets, Siri, iCloud sync, and reminders</li>
+        </ul>
+      </div>
+      <div class="plan pro">
+        <h3>Touchstone Pro <span class="price">one-time purchase</span></h3>
+        <ul>
+          <li>100+ bonus puzzles in themed Collections</li>
+          <li>Unlimited Rush Mode</li>
+          <li>Every past daily in the archive</li>
+          <li>Replay any puzzle to beat your best</li>
+          <li>Solve history and efficiency stats</li>
+          <li>Hold 3 Streak Shields instead of 1</li>
+        </ul>
+      </div>
+    </div>
+    <p class="promise">No subscription, no energy timers, no paid hints.</p>
+  </section>
+
+  <!-- Beta -->
+  <section id="beta" class="wrap" aria-labelledby="beta-title">
+    <div class="beta">
+      <p class="eyebrow">Coming soon to the App Store</p>
+      <h2 id="beta-title">Want to try it early?</h2>
+      <p class="lede" style="margin-inline:auto">I'm looking for a small group of friendly testers before launch. Send me a note and I'll send you a TestFlight invite as soon as the beta opens.</p>
+      <div class="actions">
+        <a class="btn btn-primary" href="mailto:ddworkin.apps@icloud.com?subject=Touchstone%20beta&amp;body=I'd%20like%20to%20try%20Touchstone%20early.%0A%0AMy%20device%20(iPhone%20or%20iPad%20model)%3A%20">Email me to join the beta</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="wrap">
+  <nav aria-label="Touchstone links">
+    <a href="/touchstone/privacy/">Privacy</a>
+    <a href="/touchstone/support/">Support</a>
+    <a href="/">More apps</a>
+  </nav>
+  <p>© 2026 David Dworkin. Screenshots show example puzzles.</p>
+</footer>
+
+<script>
+  // Autoplay the gameplay loop only when motion is welcome and it's on screen.
+  (function () {
+    var video = document.getElementById('gameplay');
+    var toggle = document.getElementById('video-toggle');
+    if (!video) return;
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var userPaused = false;
+
+    function setToggle() {
+      toggle.textContent = video.paused ? '▶' : '❚❚';
+      toggle.setAttribute('aria-label', video.paused ? 'Play gameplay video' : 'Pause gameplay video');
+    }
+    function tryPlay() {
+      var p = video.play();
+      if (p && p.catch) p.catch(function () { toggle.hidden = false; setToggle(); });
+    }
+
+    toggle.hidden = false;
+    toggle.addEventListener('click', function () {
+      if (video.paused) { userPaused = false; tryPlay(); } else { userPaused = true; video.pause(); }
+    });
+    video.addEventListener('play', setToggle);
+    video.addEventListener('pause', setToggle);
+    setToggle();
+
+    if (reduce.matches || !('IntersectionObserver' in window)) return;
+    new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting && !userPaused) tryPlay();
+        else if (!e.isIntersecting) video.pause();
+      });
+    }, { threshold: 0.4 }).observe(video);
+  })();
+</script>
+</body>
+</html>
