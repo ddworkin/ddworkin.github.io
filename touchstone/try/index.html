@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Try Touchstone</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%277%27 fill=%27%23297d73%27/%3E%3Cpath d=%27M7 16h18M16 7v18%27 stroke=%27%23fffdf8%27 stroke-width=%273.5%27 stroke-linecap=%27round%27/%3E%3C/svg%3E">
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="A daily word puzzle. Swap neighbouring tiles so each row becomes a chain where every word leads to the next. Try a sample puzzle right here.">
+<style>
+  /* Tokens follow the app: teal accent, cream tiles, warm/cool page gradient, serif title. */
+  :root {
+    --accent: #297d73; --accent-ink: #17504a; --accent-soft: rgba(41,125,115,.14);
+    --g0: #297d73; --g1: #c98026; --g2: #3b4fa0; --g3: #b83859;
+    --ink: #1c1c1e; --sec: rgba(60,60,67,.66); --line: rgba(0,0,0,.10);
+    --tile: #fffdf8; --card: rgba(255,255,255,.62);
+    --w0: #f6e9c8; --w1: #dcefe5; --w2: #dfe5f5;
+    --serif: ui-serif, "New York", "Iowan Old Style", Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --tile-size: 78px; --gap: 8px; --pad: 10px;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; font-family: var(--sans); color: var(--ink); line-height: 1.45;
+         background: linear-gradient(135deg, var(--w0), var(--w1) 55%, var(--w2)) fixed; min-height: 100vh; }
+  .wrap { max-width: 1060px; margin: 0 auto; padding: 18px 16px 56px; }
+  header.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 4px 0 14px; }
+  .brand { font: 700 24px var(--serif); letter-spacing: -.01em; }
+  .btn { display: inline-block; border: 0; border-radius: 999px; padding: 12px 20px; font: 700 15px var(--sans); text-decoration: none; cursor: pointer; text-align: center; }
+  .btn.primary { background: var(--accent); color: #fff; }
+  .btn.ghost { background: var(--accent-soft); color: var(--accent-ink); }
+  .btn.small { padding: 8px 14px; font-size: 13.5px; }
+  .btn:focus-visible, .tile:focus-visible, .chip:focus-visible, a:focus-visible { outline: 3px solid #1d5fd6; outline-offset: 2px; }
+  .todo { position: relative; margin-bottom: 20px; }
+  .todo::after { content: "placeholder link"; position: absolute; left: 50%; bottom: -19px; transform: translateX(-50%); white-space: nowrap;
+                 font: 600 10px var(--sans); color: #a33; text-transform: uppercase; letter-spacing: .05em; }
+
+  /* Hero: copy on the left, the game on the right (desktop); game first (phone). */
+  .hero { display: grid; gap: 24px; grid-template-columns: 1fr; align-items: start; }
+  @media (min-width: 900px) { .hero { grid-template-columns: 1fr 480px; gap: 48px; padding-top: 12px; } }
+    .pitch h1, .pitch .pitch-title { font: 700 clamp(30px, 5vw, 46px)/1.08 var(--serif); margin: 0 0 12px; letter-spacing: -.02em; }
+  .pitch p { font-size: 17px; color: var(--sec); margin: 0 0 12px; max-width: 34em; }
+  .steps { margin: 18px 0 0; padding: 0; list-style: none; display: grid; gap: 10px; max-width: 34em; }
+  .steps li { display: flex; gap: 12px; align-items: flex-start; font-size: 15px; }
+  .steps b { flex: none; width: 26px; height: 26px; border-radius: 50%; background: var(--accent); color: #fff; display: grid; place-items: center; font: 700 13px var(--sans); }
+  .game-col { order: -1; }
+  @media (min-width: 900px) { .game-col { order: 0; position: sticky; top: 16px; } }
+
+  .card { background: var(--card); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid rgba(41,125,115,.2); border-radius: 18px; padding: 14px; }
+  .game-head { display: flex; justify-content: space-between; align-items: baseline; margin: 0 2px 10px; }
+  .game-head h2 { margin: 0; font: 700 20px var(--serif); }
+  .game-head span { font-size: 13px; color: var(--sec); }
+  .stats { display: flex; gap: 8px; margin-bottom: 10px; }
+  .pill { flex: 1; background: rgba(255,255,255,.78); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; display: flex; gap: 8px; align-items: center; justify-content: center; font: 800 11px var(--sans); letter-spacing: .05em; color: var(--sec); text-transform: uppercase; white-space: nowrap; }
+  .pill strong { font: 800 17px var(--sans); color: var(--ink); letter-spacing: 0; }
+  .dots { display: inline-flex; gap: 5px; }
+  .dots i { width: 11px; height: 11px; border-radius: 50%; background: rgba(0,0,0,.18); display: block; transition: background .3s, transform .3s; }
+  .dots i.on { transform: scale(1.15); }
+
+  .board { position: relative; width: 100%; max-width: 460px; margin: 0 auto; border-radius: 16px; background: rgba(224,214,196,.5); border: 1px solid var(--line);
+           height: calc(var(--pad) * 2 + var(--tile-size) * 4 + var(--gap) * 3); touch-action: none; user-select: none; -webkit-user-select: none; }
+  .tile { position: absolute; left: 0; top: 0; width: var(--tile-size); height: var(--tile-size); border-radius: 12px; border: 1.5px solid rgba(0,0,0,.13); background: var(--tile);
+          font: 800 11.5px var(--sans); letter-spacing: .02em; text-transform: uppercase; color: #26241f; padding: 0 3px; display: grid; place-items: center; text-align: center;
+          box-shadow: 0 2px 6px rgba(0,0,0,.09); cursor: pointer; z-index: 2;
+          transition: transform .28s cubic-bezier(.3,1.25,.5,1), background .25s, border-color .25s, box-shadow .25s; -webkit-tap-highlight-color: transparent; }
+  .tile.long { font-size: 10px; letter-spacing: 0; }
+  .tile.xlong { font-size: 8.7px; letter-spacing: 0; }
+  .tile.linked { background: var(--tint, #e3f1ee); border-color: var(--gc, var(--accent)); box-shadow: 0 0 0 2px color-mix(in srgb, var(--gc, var(--accent)) 30%, transparent), 0 0 14px color-mix(in srgb, var(--gc, var(--accent)) 40%, transparent); }
+  .tile.selected { outline: 3px solid #1d5fd6; outline-offset: 2px; z-index: 4; }
+  .tile.nudge { animation: nudge .3s; }
+  .tile.lock { animation: lock .42s ease-out; z-index: 5; }
+  .bridge { position: absolute; z-index: 1; background: color-mix(in srgb, var(--gc) 55%, white); border-radius: 4px; pointer-events: none; transition: opacity .2s; }
+  .edge { position: absolute; z-index: 3; pointer-events: none; background: var(--gc); border-radius: 3px; animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity: .25; } 50% { opacity: 1; } }
+  @keyframes nudge { 0%,100% { margin-left: 0; } 25% { margin-left: -4px; } 75% { margin-left: 4px; } }
+  @keyframes lock { 0% { scale: 1; } 40% { scale: 1.12; box-shadow: 0 0 0 4px color-mix(in srgb, var(--gc) 45%, transparent), 0 0 26px var(--gc); } 100% { scale: 1; } }
+  .strip { position: absolute; left: var(--pad); right: var(--pad); height: var(--tile-size); border-radius: 12px; z-index: 1; padding: 9px 10px 8px;
+           background: color-mix(in srgb, var(--gc) 17%, white); border: 1.5px solid color-mix(in srgb, var(--gc) 55%, transparent);
+           display: flex; flex-direction: column; justify-content: center; gap: 7px; overflow: hidden; animation: merge .55s cubic-bezier(.3,1.3,.5,1); }
+  .strip::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(100deg, transparent 30%, rgba(255,255,255,.75) 50%, transparent 70%); transform: translateX(-130%); animation: sheen .9s .12s ease-out; }
+  .strip h3 { margin: 0; font: 800 11px var(--sans); letter-spacing: .06em; text-transform: uppercase; color: var(--gc); }
+  .strip p { margin: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; font: 800 10.5px var(--sans); text-transform: uppercase; color: #26241f; text-align: center; }
+  .strip p span { white-space: nowrap; } .strip p span.long { font-size: 9px; } .strip p span.xlong { font-size: 8px; }
+  @keyframes merge { 0% { transform: scale(.86); opacity: 0; } 55% { transform: scale(1.05); opacity: 1; } 100% { transform: none; opacity: 1; } }
+  @keyframes sheen { to { transform: translateX(130%); } }
+  .tile.walk { animation: walk .38s ease-out both; animation-delay: var(--d, 0ms); z-index: 5; }
+  @keyframes walk { 0% { scale: 1; } 45% { scale: 1.14; background: color-mix(in srgb, var(--gc) 30%, white); box-shadow: 0 0 0 3px color-mix(in srgb, var(--gc) 50%, transparent), 0 0 22px var(--gc); } 100% { scale: 1.04; background: color-mix(in srgb, var(--gc) 20%, white); } }
+  .challenge { margin: 0 0 10px; padding: 9px 12px; border-radius: 10px; background: color-mix(in srgb, #c98026 14%, white); border: 1px solid color-mix(in srgb, #c98026 40%, transparent); font: 600 13.5px/1.4 var(--sans); color: var(--ink); }
+  .compare { font: 700 15px var(--sans); color: var(--accent); margin: 2px 0 8px; }
+  .headline { text-align: center; margin: 4px auto 16px; max-width: 640px; }
+  .headline h1 { margin: 0 0 6px; font: 700 clamp(26px, 6vw, 38px)/1.12 var(--serif); }
+  .headline p { margin: 0; font: 500 16px/1.4 var(--sans); color: var(--sec); }
+  .why-item { opacity: 0; animation: whyIn .5s ease-out forwards; animation-delay: calc(var(--i, 0) * 420ms + 300ms); }
+  @keyframes whyIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .why-list { margin: 10px 0 14px; display: grid; gap: 8px; text-align: left; }
+  .why-item { border-left: 4px solid var(--gc); background: color-mix(in srgb, var(--gc) 10%, white); border-radius: 8px; padding: 7px 10px; font: 500 13px/1.4 var(--sans); color: var(--ink); }
+  .why-item b { display: block; font: 800 11px var(--sans); letter-spacing: .06em; text-transform: uppercase; color: var(--gc); } .why-item i { font-style: normal; font-weight: 700; }
+  .chip:disabled { opacity: .4; cursor: default; }
+  .toast { position: absolute; left: 50%; top: 44%; z-index: 8; transform: translate(-50%, -50%); pointer-events: none; background: color-mix(in srgb, var(--gc) 92%, black); color: #fff; border-radius: 999px; padding: 9px 18px; font: 800 15px var(--serif); white-space: nowrap; animation: toast 1.25s ease-out forwards; box-shadow: 0 6px 20px rgba(0,0,0,.2); }
+  @keyframes toast { 0% { opacity: 0; transform: translate(-50%, -30%) scale(.7); } 18% { opacity: 1; transform: translate(-50%, -50%) scale(1.06); } 70% { opacity: 1; transform: translate(-50%, -60%) scale(1); } 100% { opacity: 0; transform: translate(-50%, -90%) scale(1); } }
+  .ring { position: absolute; z-index: 6; border: 3px solid var(--gc); border-radius: 50%; pointer-events: none; }
+  .confetti { position: absolute; top: -10px; width: 8px; height: 12px; border-radius: 2px; pointer-events: none; z-index: 9; }
+  .spark { position: absolute; width: 8px; height: 8px; border-radius: 50%; pointer-events: none; z-index: 6; }
+
+  .toolbar { display: flex; gap: 8px; justify-content: space-between; align-items: center; margin-top: 10px; flex-wrap: wrap; }
+  .toolbar .left { display: flex; gap: 8px; }
+  .chip { border: 1px solid var(--line); background: rgba(255,255,255,.8); border-radius: 999px; padding: 7px 13px; font: 600 13px var(--sans); color: var(--ink); cursor: pointer; }
+  .chip[aria-pressed="false"] { opacity: .65; }
+  #status { font-size: 13.5px; color: var(--sec); min-height: 1.5em; margin: 10px 2px 0; }
+
+  .result { margin-top: 12px; padding: 14px; border-radius: 14px; background: color-mix(in srgb, var(--accent) 12%, white); border: 1px solid rgba(41,125,115,.3); display: none; }
+  .result.show { display: block; animation: dock .45s ease-out; }
+  .result h3 { margin: 0 0 4px; font: 700 20px var(--serif); }
+  .emoji { font-size: 20px; letter-spacing: 1px; word-break: break-all; margin: 6px 0 2px; }
+  .result .row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; align-items: center; }
+  .result p { margin: 0; font-size: 14px; color: var(--sec); }
+
+  /* Why get the app */
+  section.why { margin-top: 46px; }
+  section.why h2 { font: 700 clamp(26px, 4vw, 36px)/1.1 var(--serif); margin: 0 0 6px; letter-spacing: -.01em; }
+  section.why > p.lead { font-size: 17px; color: var(--sec); margin: 0 0 22px; max-width: 40em; }
+  .features { display: grid; gap: 12px; grid-template-columns: 1fr; }
+  @media (min-width: 640px) { .features { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 960px) { .features { grid-template-columns: repeat(3, 1fr); } }
+  .feature { background: var(--card); border: 1px solid rgba(41,125,115,.18); border-radius: 16px; padding: 16px; }
+  .feature .ic { font-size: 22px; line-height: 1; }
+  .feature h3 { margin: 8px 0 4px; font: 700 17px var(--sans); }
+  .feature p { margin: 0; font-size: 14.5px; color: var(--sec); }
+  .cta-band { margin-top: 26px; display: flex; gap: 14px; flex-wrap: wrap; align-items: center; justify-content: space-between; padding: 20px; border-radius: 18px; background: color-mix(in srgb, var(--accent) 14%, white); border: 1px solid rgba(41,125,115,.3); }
+  .cta-band h3 { margin: 0; font: 700 22px var(--serif); } .cta-band p { margin: 2px 0 0; color: var(--sec); font-size: 14.5px; }
+  footer { margin-top: 28px; font-size: 12.5px; color: var(--sec); text-align: center; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tile, .dots i { transition: none; } .why-item { animation: none; opacity: 1; } .tile.nudge, .tile.lock, .tile.walk, .strip, .strip::after, .result.show, .toast { animation: none; } .edge { animation: none; opacity: 1; }
+  }
+  @media (max-width: 380px) { :root { --pad: 8px; --gap: 6px; } .pill { padding: 7px 6px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">Touchstone</div>
+    <a class="btn primary small" href="https://ddworkin.github.io/touchstone/#beta" data-cta>Get the app</a>
+  </header>
+
+  <main>
+    <div class="headline"><h1>Sixteen words. Four stories. Put each in order.</h1><p>Swap neighbouring tiles. A word glows when it touches the one it leads to.</p></div>
+    <div class="hero">
+      <div class="pitch">
+        <h2 class="pitch-title">Each word leads to the next.</h2>
+        <p>Touchstone is a daily word puzzle. A board of tiles hides four chains of four words, each a little story, like <em>spark &rarr; flame &rarr; smoke &rarr; ash</em>. Swap neighbouring tiles until every chain is in order.</p>
+        <p>Try the puzzle on this page. It takes about three minutes.</p>
+        <ol class="steps">
+          <li><b>1</b><span>Tap a tile, then tap a tile next to it to swap them. (Or drag a tile onto its neighbour.)</span></li>
+          <li><b>2</b><span>A word lights up when it touches the word it leads to or follows. Order matters: the chain must run start to finish.</span></li>
+          <li><b>3</b><span>Complete a chain and it clears into a row. The board shrinks, and the last chain is the hardest.</span></li>
+        </ol>
+      </div>
+
+      <div class="game-col">
+        <div class="card" id="game">
+          <div class="game-head"><h2 id="puzzle-name">Sample puzzle</h2><span>No sign-up needed</span></div>
+          <div class="challenge" id="challenge" hidden></div>
+          <div class="stats">
+            <div class="pill" aria-label="Moves">Moves <strong id="moves">0</strong></div>
+            <div class="pill" aria-label="Groups solved">Groups <span class="dots" id="dots" aria-hidden="true"><i></i><i></i><i></i><i></i></span></div>
+          </div>
+          <div class="board" id="board" role="group" aria-label="Puzzle board. Swap neighbouring tiles."></div>
+          <div id="status" role="status" aria-live="polite">Tap a tile, then a neighbour, to swap them.</div>
+          <div class="toolbar">
+            <div class="left">
+              <button class="chip" id="undo" type="button" disabled>Undo</button>
+              <button class="chip" id="reset" type="button">Start over</button>
+              <button class="chip" id="sound" type="button" aria-pressed="true">Sound: on</button>
+            </div>
+            <span style="font-size:12.5px;color:var(--sec)" id="which">Puzzle 1 of 2</span>
+          </div>
+          <div class="result" id="result" aria-live="polite">
+            <h3 id="result-title">Solved!</h3>
+            <p id="result-line"></p>
+            <p class="compare" id="compare" hidden></p>
+            <div class="why-list" id="why-list"></div>
+            <div class="emoji" id="emoji" aria-label="Your solve as coloured squares"></div>
+            <div class="row">
+              <button class="btn ghost small" id="copy" type="button">Copy my result</button>
+              <button class="btn ghost small" id="another" type="button">Try another puzzle</button>
+            </div>
+            <div class="row" style="margin-top:14px">
+              <a class="btn primary" href="https://ddworkin.github.io/touchstone/#beta" data-cta>Try the daily puzzle</a>
+              <p style="margin-bottom:20px">That was one sample. The app gives you a new one every day, a little harder as the week goes on.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section class="why" id="why">
+      <h2>That was a sample. The app is a daily habit.</h2>
+      <p class="lead">One new puzzle a day, the same for everyone, easy on Monday and harder as the week goes on. The full game adds the rest:</p>
+      <div class="features">
+        <div class="feature"><div class="ic" aria-hidden="true">📅</div><h3>A new puzzle every day</h3><p>Everyone plays the same board. Mondays are gentle; the week ramps up to Sunday, then starts again.</p></div>
+        <div class="feature"><div class="ic" aria-hidden="true">🔥</div><h3>Streaks and a Streak Shield</h3><p>Keep your streak going. A free monthly Streak Shield covers a day you miss.</p></div>
+        <div class="feature"><div class="ic" aria-hidden="true">🌱</div><h3>First Steps</h3><p>Six easy warm-up puzzles to learn the game without pressure, then jump into the daily.</p></div>
+        <div class="feature"><div class="ic" aria-hidden="true">🗂️</div><h3>Ten collections</h3><p>Themed sets of puzzles, each with its own look and its own mix of boards.</p></div>
+        <div class="feature"><div class="ic" aria-hidden="true">📚</div><h3>The Daily Archive</h3><p>Missed a day? Recent puzzles are free to play, and older ones come with Pro.</p></div>
+        <div class="feature"><div class="ic" aria-hidden="true">🔷</div><h3>Shapes beyond chains</h3><p>Hub, branch, star and cycle puzzles: a word in the middle with others around it, a chain that splits, or a loop. Walkthroughs show you each one.</p></div>
+        <div class="feature"><div class="ic" aria-hidden="true">🪨</div><h3>Stone boards</h3><p>Some boards have stones. Movable stones shift when you swap and never link; fixed walls never move, so you slide words into the gaps.</p></div>
+        <div class="feature"><div class="ic" aria-hidden="true">⚡</div><h3>Rush mode</h3><p>A fast 90-second mode where you clear as many chains as you can. One free run a day.</p></div>
+        <div class="feature"><div class="ic" aria-hidden="true">📈</div><h3>Stats, replay and sharing</h3><p>Watch your last solve replayed, replay a puzzle to beat your move count, and share your result.</p></div>
+        <div class="feature"><div class="ic" aria-hidden="true">📱</div><h3>Widget, Siri and reminders</h3><p>A Home Screen widget, "Play today" with Siri or Shortcuts, and an optional daily reminder.</p></div>
+        <div class="feature"><div class="ic" aria-hidden="true">☁️</div><h3>iPhone and iPad, in sync</h3><p>Your progress follows you between devices on the same Apple Account.</p></div>
+      </div>
+      <div class="cta-band">
+        <div><h3>Touchstone Pro is a one-time purchase.</h3><p>The game is free to download. No subscription.</p></div>
+        <a class="btn primary" href="https://ddworkin.github.io/touchstone/#beta" data-cta>Get Touchstone</a>
+      </div>
+    </section>
+  </main>
+  <footer>Touchstone is a daily word puzzle for iPhone and iPad. This sample uses no cookies, no tracking and no outside services.</footer>
+</div>
+
+<script>
+const PUZZLES = [{"name": "Night Out", "par": 9, "target": 18, "groups": [{"title": "Dinner", "words": ["RESERVE", "STARTER", "DESSERT", "RECEIPT"], "why": "You reserve a table, start with a starter, finish with dessert, and the receipt arrives."}, {"title": "Movie", "words": ["SHOWTIME", "TRAILER", "CREDITS", "SEQUEL"], "why": "You check the showtime, the trailers roll, the credits end the film, and the sequel is already teased."}, {"title": "Road trip", "words": ["ITINERARY", "REFUEL", "DETOUR", "SOUVENIR"], "why": "You plan the itinerary, refuel along the way, take a detour, and bring home a souvenir."}, {"title": "Birthday", "words": ["INVITATION", "BALLOONS", "CANDLES", "PRESENTS"], "why": "The invitation goes out, the balloons go up, the candles are lit, and then come the presents."}], "start": ["STARTER", "CREDITS", "ITINERARY", "SHOWTIME", "BALLOONS", "DETOUR", "PRESENTS", "SOUVENIR", "DESSERT", "RECEIPT", "RESERVE", "INVITATION", "SEQUEL", "REFUEL", "TRAILER", "CANDLES"]}, {"groups": [{"title": "Flight", "words": ["CHECKIN", "SECURITY", "BOARDING", "TAKEOFF"], "why": "You check in, get through security, board, and then the plane takes off."}, {"title": "Mail", "words": ["ENVELOPE", "POSTMARK", "MAILBOX", "DOORSTEP"], "why": "A letter is sealed in an envelope, gets its postmark, is dropped in a mailbox, and ends up on your doorstep."}, {"title": "Show", "words": ["AUDITION", "REHEARSAL", "PREMIERE", "ENCORE"], "why": "You audition for a part, rehearse it, open on the premiere, and if it goes well the crowd calls for an encore."}, {"title": "Campfire", "words": ["KINDLING", "BONFIRE", "CRACKLE", "EMBERS"], "why": "Kindling catches, the bonfire builds, it crackles, and it dies down to embers."}], "start": ["BONFIRE", "REHEARSAL", "MAILBOX", "SECURITY", "CHECKIN", "ENVELOPE", "TAKEOFF", "KINDLING", "CRACKLE", "ENCORE", "DOORSTEP", "BOARDING", "PREMIERE", "EMBERS", "AUDITION", "POSTMARK"], "name": "Four Everyday Stories", "par": 9, "target": 18}, {"groups": [{"title": "Rocket", "words": ["COUNTDOWN", "IGNITE", "LIFTOFF", "SPLASHDOWN"], "why": "The countdown ends, the engines ignite, the rocket lifts off, and the capsule finally splashes down."}, {"title": "Fireworks", "words": ["LAUNCH", "FIREWORK", "CONFETTI", "FINALE"], "why": "A shell is launched, the firework bursts, colour rains down like confetti, and the finale ends the show."}, {"title": "Cookout", "words": ["CHARCOAL", "GRILL", "SIZZLE", "BARBECUE"], "why": "Light the charcoal, heat the grill, hear the sizzle, and sit down to the barbecue."}, {"title": "Snow day", "words": ["BLIZZARD", "SNOWBALL", "SLEDGE", "FIREPLACE"], "why": "A blizzard blankets everything, snowballs fly, you go sledding, and then you warm up by the fireplace."}], "start": ["SIZZLE", "SPLASHDOWN", "SNOWBALL", "BARBECUE", "CHARCOAL", "FINALE", "FIREPLACE", "FIREWORK", "LAUNCH", "COUNTDOWN", "GRILL", "IGNITE", "LIFTOFF", "CONFETTI", "SLEDGE", "BLIZZARD"], "name": "Fire and Ice", "par": 8, "target": 16}];
+
+/* ---------- Game ---------- */
+const COLS = 4;
+const GROUP_COLORS = ['#297d73', '#c98026', '#3b4fa0', '#b83859'];
+const GROUP_TINTS = ['#e3f1ee', '#fbecd4', '#e3e8f7', '#f7e1e7'];
+const EMOJI = ['🟩', '🟨', '🟦', '🟥'];
+const NOTES = [392, 440, 494, 587, 659];
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const $ = (id) => document.getElementById(id);
+const boardEl = $('board');
+let state;          // { index, tiles[], solved[], moves, clearMoves[], selected, busy }
+let tileEls = new Map();   // word -> element
+let soundOn = true, audio = null;
+
+function adjacent(i, j) { return Math.abs(Math.floor(i / COLS) - Math.floor(j / COLS)) + Math.abs((i % COLS) - (j % COLS)) === 1; }
+function groupIndexOf(word, puzzle) { return puzzle.groups.findIndex(g => g.words.includes(word)); }
+function metrics() {
+  const cs = getComputedStyle(document.documentElement);
+  return { size: parseFloat(cs.getPropertyValue('--tile-size')), gap: parseFloat(cs.getPropertyValue('--gap')), pad: parseFloat(cs.getPropertyValue('--pad')) };
+}
+function layoutSizes() {
+  const w = boardEl.clientWidth, pad = w < 380 ? 8 : 10, gap = w < 380 ? 6 : 8;
+  document.documentElement.style.setProperty('--pad', pad + 'px');
+  document.documentElement.style.setProperty('--gap', gap + 'px');
+  document.documentElement.style.setProperty('--tile-size', ((w - 2 * pad - 3 * gap) / COLS) + 'px');
+}
+function cellXY(index) { const m = metrics(); return { x: m.pad + (index % COLS) * (m.size + m.gap), y: m.pad + Math.floor(index / COLS) * (m.size + m.gap) }; }
+function lenClass(word) { return word.length >= 10 ? 'xlong' : word.length >= 9 ? 'long' : ''; }
+
+/* ----- audio: silent until the first tap; G4 A4 B4 D5 E5 sine notes ----- */
+function ensureAudio() {
+  if (!soundOn) return null;
+  if (!audio) { try { audio = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { audio = null; } }
+  if (audio && audio.state !== 'running') audio.resume();
+  return audio;
+}
+/* Browsers only start audio from a real gesture (Safari and iPhone are strict): unlock on the first tap, click, key or
+   touch, and play one silent sample, which is the standard trick for iOS. */
+let unlocked = false;
+function unlockAudio() {
+  if (unlocked || !soundOn) return;
+  const ctx = ensureAudio(); if (!ctx) return;
+  try { const b = ctx.createBuffer(1, 1, 22050), src = ctx.createBufferSource(); src.buffer = b; src.connect(ctx.destination); src.start(0); } catch (e) {}
+  ctx.resume().then(() => { unlocked = ctx.state === 'running'; });
+}
+['pointerdown', 'touchend', 'click', 'keydown'].forEach(ev => window.addEventListener(ev, unlockAudio, { capture: true, passive: true }));
+function tick() { if (!soundOn) return; note(520, 0.09, 0.14); }   // the app's soft tap on every swap
+function note(freq, dur = 0.42, vol = 0.22) {
+  const ctx = ensureAudio(); if (!ctx) return;
+  if (ctx.state !== 'running') { ctx.resume().then(() => { if (ctx.state === 'running') note(freq, dur, vol); }); return; }
+  const o = ctx.createOscillator(), g = ctx.createGain(), t = ctx.currentTime;
+  o.type = 'sine'; o.frequency.value = freq; g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(vol, t + 0.015); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g).connect(ctx.destination); o.start(t); o.stop(t + dur + 0.05);
+}
+
+/* ----- state ----- */
+function start(index) {
+  const p = PUZZLES[index];
+  state = { index, tiles: p.start.slice(), solved: [], moves: 0, clearMoves: [], selected: null, busy: false, lastLinks: 0, history: [] };
+  $('result').classList.remove('show');
+  const ch = $('challenge'), cc = challenge && challenge.p - 1 === index ? challenge : null;
+  state.challenge = cc; ch.hidden = !cc; if (cc) ch.textContent = 'A friend solved this puzzle in ' + cc.m + ' moves. Can you beat that?';
+  $('which').textContent = 'Puzzle ' + (index + 1) + ' of ' + PUZZLES.length;
+  $('puzzle-name').textContent = p.name;
+  boardEl.innerHTML = ''; tileEls = new Map();
+  layoutSizes();
+  render(true);
+  say('Tap a tile, then a neighbour, to swap them.');
+}
+/* Challenge links (spec: TouchstoneShareLinkSpec.md): ?p=<sample puzzle number>&m=<friend's moves>. Both are checked;
+   anything else is ignored and the page works as normal. The link carries no names, ids or answers. */
+function parseChallenge() {
+  const q = new URLSearchParams(location.search), p = Number(q.get('p')), m = Number(q.get('m'));
+  return Number.isInteger(p) && p >= 1 && p <= PUZZLES.length && Number.isInteger(m) && m >= 1 && m <= 500 ? { p, m } : null;
+}
+const challenge = parseChallenge();
+function shareLink(moves) { return location.href.split(/[?#]/)[0] + '?p=' + (state.index + 1) + '&m=' + moves; }
+function say(text) { $('status').textContent = text; }
+
+/* Which links are satisfied for each unsolved group, given the current tile order. */
+function analyse() {
+  const p = PUZZLES[state.index], pos = new Map(state.tiles.map((w, i) => [w, i]));
+  const info = p.groups.map((g, gi) => {
+    if (state.solved.some(s => s.gi === gi)) return { gi, solved: true };
+    const links = [0, 1, 2].map(k => {
+      const a = pos.get(g.words[k]), b = pos.get(g.words[k + 1]);
+      return { a: g.words[k], b: g.words[k + 1], ia: a, ib: b, ok: adjacent(a, b) };
+    });
+    return { gi, solved: false, links, complete: links.every(l => l.ok), missing: links.filter(l => !l.ok) };
+  });
+  return info;
+}
+
+function render(initial) {
+  const m = metrics(), p = PUZZLES[state.index], info = analyse();
+  const n = state.tiles.length;
+  // tiles
+  state.tiles.forEach((w, i) => {
+    let el = tileEls.get(w);
+    if (!el) {
+      el = document.createElement('button'); el.type = 'button'; el.className = 'tile ' + lenClass(w); el.textContent = w; el.dataset.word = w;
+      el.addEventListener('click', onTileClick); el.addEventListener('keydown', onTileKey);
+      boardEl.appendChild(el); tileEls.set(w, el);
+    }
+    el.style.width = m.size + 'px'; el.style.height = m.size + 'px';
+    const { x, y } = cellXY(i); el.style.transform = `translate(${x}px, ${y}px)`; el.dataset.index = i;
+    el.classList.remove('linked'); el.style.removeProperty('--gc'); el.style.removeProperty('--tint');
+    el.classList.toggle('selected', state.selected === i);
+    const gi = groupIndexOf(w, p);
+    const linkedTo = [];
+    const g = info[gi];
+    if (g && !g.solved) g.links.forEach(l => { if (l.ok && (l.a === w || l.b === w)) linkedTo.push(l.a === w ? l.b : l.a); });
+    if (linkedTo.length) { el.classList.add('linked'); el.style.setProperty('--gc', GROUP_COLORS[gi]); el.style.setProperty('--tint', GROUP_TINTS[gi]); }
+    el.setAttribute('aria-label', `${w}, row ${Math.floor(i / COLS) + 1}, column ${(i % COLS) + 1}` + (linkedTo.length ? `, linked to ${linkedTo.join(' and ')}` : '') + (state.selected === i ? ', selected' : ''));
+    el.tabIndex = (state.focusIndex ?? 0) === i ? 0 : -1;
+  });
+  // remove tiles that cleared
+  for (const [w, el] of [...tileEls]) if (!state.tiles.includes(w)) { el.remove(); tileEls.delete(w); }
+  // bridges and edge hints
+  boardEl.querySelectorAll('.bridge, .edge').forEach(e => e.remove());
+  info.forEach(g => {
+    if (g.solved) return;
+    g.links.forEach(l => { if (l.ok) addBridge(l.ia, l.ib, g.gi, m); });
+    addEdgeHints(g, g.gi, m);
+  });
+  // solved strips
+  boardEl.querySelectorAll('.strip').forEach(e => { if (!state.solved.some(s => s.el === e)) e.remove(); });
+  state.solved.forEach((s, k) => {
+    if (!s.el) {
+      const g = p.groups[s.gi], el = document.createElement('div'); el.className = 'strip'; el.style.setProperty('--gc', GROUP_COLORS[s.gi]);
+      el.innerHTML = `<h3></h3><p>${g.words.map(w => `<span class="${lenClass(w)}">${w}</span>`).join('')}</p>`; el.querySelector('h3').textContent = g.title;
+      boardEl.appendChild(el); s.el = el;
+    }
+    s.el.style.top = (m.pad + (3 - k) * (m.size + m.gap)) + 'px'; s.el.style.height = m.size + 'px';
+  });
+  // counters
+  $('moves').textContent = state.moves;
+  $('undo').disabled = !state.history.length || state.busy;
+  [...$('dots').children].forEach((d, i) => { const s = state.solved[i]; d.className = s ? 'on' : ''; d.style.background = s ? GROUP_COLORS[s.gi] : ''; });
+}
+function addBridge(ia, ib, gi, m) {
+  const a = cellXY(ia), b = cellXY(ib), el = document.createElement('div'); el.className = 'bridge'; el.style.setProperty('--gc', GROUP_COLORS[gi]);
+  if (a.y === b.y) { el.style.left = (Math.min(a.x, b.x) + m.size - 2) + 'px'; el.style.top = (a.y + m.size * 0.28) + 'px'; el.style.width = (m.gap + 4) + 'px'; el.style.height = (m.size * 0.44) + 'px'; }
+  else { el.style.top = (Math.min(a.y, b.y) + m.size - 2) + 'px'; el.style.left = (a.x + m.size * 0.28) + 'px'; el.style.height = (m.gap + 4) + 'px'; el.style.width = (m.size * 0.44) + 'px'; }
+  boardEl.appendChild(el);
+}
+/* The app's open-edge hint: only when a chain of three is one link short of four. The chain's END pulses on every
+   side that is not bonded to the chain; the missing word is never marked, and a 2+2 split gets no hint. */
+function addEdgeHints(g, gi, m) {
+  const n = state.tiles.length, pos = (w) => state.tiles.indexOf(w), p = PUZZLES[state.index];
+  const words = p.groups[gi].words, linked = new Set();
+  g.links.forEach(l => { if (l.ok) { linked.add(l.a); linked.add(l.b); } });
+  const orphans = words.filter(w => !linked.has(w));
+  if (orphans.length !== 1 || g.missing.length !== 1) return;
+  const miss = g.missing[0];
+  if (miss.a !== orphans[0] && miss.b !== orphans[0]) return;
+  const end = miss.a === orphans[0] ? miss.b : miss.a, e = pos(end);
+  if (!linked.has(end)) return;
+  const bonded = new Set();
+  g.links.forEach(l => { if (l.ok && (l.a === end || l.b === end)) bonded.add(pos(l.a === end ? l.b : l.a)); });
+  const row = Math.floor(e / COLS), col = e % COLS;
+  const sides = [['up', row > 0 ? e - COLS : -1], ['down', e + COLS < n ? e + COLS : -1],
+                 ['left', col > 0 ? e - 1 : -1], ['right', col < COLS - 1 && e + 1 < n ? e + 1 : -1]];
+  const f = cellXY(e), th = 4, inset = m.size * 0.2;
+  sides.forEach(([side, nb]) => {
+    if (nb < 0 || bonded.has(nb)) return;
+    const el = document.createElement('div'); el.className = 'edge'; el.style.setProperty('--gc', GROUP_COLORS[gi]);
+    if (side === 'left' || side === 'right') { el.style.width = th + 'px'; el.style.height = (m.size - 2 * inset) + 'px'; el.style.top = (f.y + inset) + 'px'; el.style.left = (side === 'right' ? f.x + m.size - th : f.x) + 'px'; }
+    else { el.style.height = th + 'px'; el.style.width = (m.size - 2 * inset) + 'px'; el.style.left = (f.x + inset) + 'px'; el.style.top = (side === 'down' ? f.y + m.size - th : f.y) + 'px'; }
+    boardEl.appendChild(el);
+  });
+}
+
+/* ----- interaction ----- */
+function onTileClick(e) {
+  if (state.busy) return;
+  if (dragHandled) { dragHandled = false; return; }
+  ensureAudio();
+  const i = Number(e.currentTarget.dataset.index); state.focusIndex = i;
+  if (state.selected === null) { state.selected = i; tick(); render(); say(`${state.tiles[i]} selected. Tap a neighbouring tile to swap.`); focusTile(i); return; }
+  if (state.selected === i) { state.selected = null; render(); say('Selection cleared.'); focusTile(i); return; }
+  if (adjacent(state.selected, i)) { const from = state.selected; state.selected = null; swap(from, i); return; }
+  const el = e.currentTarget; el.classList.remove('nudge'); void el.offsetWidth; el.classList.add('nudge');
+  state.selected = i; render(); say('Tiles swap only with a neighbour. ' + state.tiles[i] + ' is selected.'); focusTile(i);
+}
+function onTileKey(e) {
+  const i = Number(e.currentTarget.dataset.index), n = state.tiles.length; let j = null;
+  if (e.key === 'ArrowRight') j = i + 1; else if (e.key === 'ArrowLeft') j = i - 1; else if (e.key === 'ArrowDown') j = i + COLS; else if (e.key === 'ArrowUp') j = i - COLS;
+  if (j !== null) { e.preventDefault(); if (j >= 0 && j < n && (Math.abs(j - i) !== 1 || Math.floor(j / COLS) === Math.floor(i / COLS))) { state.focusIndex = j; focusTile(j); } }
+}
+function focusTile(i) { const el = [...tileEls.values()].find(t => Number(t.dataset.index) === i); if (el) { [...tileEls.values()].forEach(t => t.tabIndex = -1); el.tabIndex = 0; el.focus({ preventScroll: true }); } }
+
+/* Path drag, like the app: press a tile and drag across neighbours; each cell crossed swaps (one move each), and
+   chains clear when you let go. Tap-tap still works. */
+let drag = null, dragHandled = false;
+function cellAt(clientX, clientY) {
+  const r = boardEl.getBoundingClientRect(), m = metrics(), x = clientX - r.left - m.pad, y = clientY - r.top - m.pad, step = m.size + m.gap;
+  const col = Math.floor(x / step), row = Math.floor(y / step);
+  if (col < 0 || col >= COLS || row < 0 || x - col * step > m.size || y - row * step > m.size) return null;
+  const i = row * COLS + col; return i < state.tiles.length ? i : null;
+}
+boardEl.addEventListener('pointerdown', (e) => {
+  const t = e.target.closest('.tile'); if (!t || state.busy) return;
+  drag = { i: Number(t.dataset.index), x: e.clientX, y: e.clientY, steps: 0 }; dragHandled = false;
+});
+boardEl.addEventListener('pointermove', (e) => {
+  if (!drag || state.busy) return;
+  if (drag.steps === 0 && Math.hypot(e.clientX - drag.x, e.clientY - drag.y) < 14) return;
+  const j = cellAt(e.clientX, e.clientY);
+  if (j === null || j === drag.i) return;
+  if (adjacent(drag.i, j)) { ensureAudio(); state.selected = null; dragHandled = true; swap(drag.i, j, true); drag.i = j; drag.steps++; }
+});
+function endDrag() { if (!drag) return; const d = drag; drag = null; if (d.steps) { dragHandled = true; settle(); } setTimeout(() => { dragHandled = false; }, 0); }
+window.addEventListener('pointerup', endDrag);
+window.addEventListener('pointercancel', endDrag);
+
+function pushHistory() { state.history.push({ tiles: state.tiles.slice(), solved: state.solved.map(x => ({ gi: x.gi, el: x.el })), clearMoves: state.clearMoves.slice(), lastLinks: state.lastLinks }); }
+function undo() {
+  if (state.busy || !state.history.length) return;
+  const h = state.history.pop(); ensureAudio();
+  state.tiles = h.tiles; state.solved = h.solved; state.clearMoves = h.clearMoves; state.lastLinks = h.lastLinks; state.selected = null; state.focusIndex = 0;
+  $('result').classList.remove('show'); render(); tick();
+  say('Undid your last move. (As in the app, the move still counts.)');
+}
+async function swap(i, j, deferClear = false) {
+  pushHistory(); tick();
+  const t = state.tiles; [t[i], t[j]] = [t[j], t[i]]; state.moves++; state.focusIndex = j;
+  const before = state.lastLinks; render();
+  const info = analyse(); const linkCount = info.reduce((s, g) => s + (g.solved ? 0 : g.links.filter(l => l.ok).length), 0);
+  const names = [t[i], t[j]];
+  if (linkCount > before) { const g = info.find(g => !g.solved && g.links.filter(l => l.ok).length > 0 && g.links.some(l => names.includes(l.a) || names.includes(l.b))); const c = g ? g.links.filter(l => l.ok).length : 1; note(NOTES[Math.min(c, 3) - 1]); }
+  state.lastLinks = linkCount;
+  say(`Swapped ${names[0]} and ${names[1]}.`);
+  if (!deferClear) await settle();
+}
+const wait = (ms) => new Promise(r => setTimeout(r, reduceMotion ? 0 : ms));
+const RUN = [392, 440, 494, 587];   // G4 A4 B4 D5: one rising note per word of the finished chain, like the app
+function toast(text, color) {
+  const el = document.createElement('div'); el.className = 'toast'; el.style.setProperty('--gc', color); el.textContent = text; boardEl.appendChild(el); setTimeout(() => el.remove(), 1400);
+}
+function burst(els, color) {
+  if (reduceMotion || !els.length) return;
+  if (navigator.vibrate) navigator.vibrate(24);
+  const m = metrics(), pts = els.map(el => { const c = cellXY(Number(el.dataset.index)); return { x: c.x + m.size / 2, y: c.y + m.size / 2 }; });
+  const cx = pts.reduce((a, q) => a + q.x, 0) / pts.length, cy = pts.reduce((a, q) => a + q.y, 0) / pts.length;
+  for (let r = 0; r < 2; r++) {
+    const ring = document.createElement('div'); ring.className = 'ring'; ring.style.setProperty('--gc', color); ring.style.left = (cx - 12) + 'px'; ring.style.top = (cy - 12) + 'px'; ring.style.width = ring.style.height = '24px'; boardEl.appendChild(ring);
+    ring.animate([{ transform: 'scale(.4)', opacity: .9 }, { transform: 'scale(' + (7 + r * 3) + ')', opacity: 0 }], { duration: 560 + r * 220, delay: r * 90, easing: 'ease-out' }).onfinish = () => ring.remove();
+  }
+  for (let k = 0; k < 40; k++) {
+    const sp = document.createElement('div'); sp.className = 'spark';
+    sp.style.background = k % 3 === 0 ? '#fff' : color; sp.style.left = (cx - 4) + 'px'; sp.style.top = (cy - 4) + 'px';
+    boardEl.appendChild(sp);
+    const a = Math.random() * Math.PI * 2, d = 40 + Math.random() * 70;
+    sp.animate([{ transform: 'translate(0,0) scale(1)', opacity: 1 }, { transform: `translate(${Math.cos(a) * d}px, ${Math.sin(a) * d}px) scale(.2)`, opacity: 0 }],
+      { duration: 620 + Math.random() * 280, easing: 'cubic-bezier(.2,.7,.3,1)' }).onfinish = () => sp.remove();
+  }
+}
+async function settle() {
+  const p = PUZZLES[state.index];
+  for (;;) {
+    const done = analyse().find(g => !g.solved && g.complete);
+    if (!done) break;
+    state.busy = true;
+    const g = p.groups[done.gi];
+    const els = g.words.map(w => tileEls.get(w)).filter(Boolean);
+    // 1. a light runs down the chain in order, one note per word; 2. the whole chain pops with sparks and a chord
+    els.forEach((el, i) => { el.style.setProperty('--gc', GROUP_COLORS[done.gi]); el.style.setProperty('--d', (i * 140) + 'ms'); el.classList.add('walk'); });
+    if (!reduceMotion) els.forEach((el, i) => setTimeout(() => note(RUN[i], 0.4, 0.15), i * 140));
+    await wait(els.length * 140 + 160);
+    els.forEach(el => { el.classList.remove('walk'); el.classList.add('lock'); });
+    burst(els, GROUP_COLORS[done.gi]);
+    if (!reduceMotion) toast(g.title + ' cleared', GROUP_COLORS[done.gi]);
+    note(880, 0.7, 0.2); setTimeout(() => note(659, 0.5, 0.1), 90);
+    await wait(460);
+    state.clearMoves.push({ gi: done.gi, move: state.moves });
+    state.tiles = state.tiles.filter(w => !g.words.includes(w));      // remaining tiles keep reading order
+    state.solved.push({ gi: done.gi, el: null });
+    state.selected = null; state.focusIndex = 0;
+    render();
+    say(`${g.title} cleared. ${4 - state.solved.length} ${4 - state.solved.length === 1 ? 'chain' : 'chains'} to go.`);
+    await wait(420);
+  }
+  state.lastLinks = analyse().reduce((s, g) => s + (g.solved ? 0 : g.links.filter(l => l.ok).length), 0);
+  state.busy = false;
+  if (state.solved.length === 4) win(); else render();
+}
+function win() {
+  const p = PUZZLES[state.index]; let prev = 0, line = '';
+  state.clearMoves.forEach(c => { line += EMOJI[c.gi].repeat(Math.max(1, c.move - prev)); prev = c.move; });
+  const mv = state.moves + (state.moves === 1 ? ' move' : ' moves');
+  const band = state.moves <= p.target ? 'Quick solve' : state.moves <= Math.floor(p.target * 1.4) ? 'Solid solve' : '';
+  $('result-title').textContent = 'Solved in ' + mv + '. Par is ' + p.par + '.';
+  $('result-line').textContent = (band ? band + '. ' : '') + 'You found four stories: ' + state.clearMoves.map(c => p.groups[c.gi].title).join(', ') + '. Par is the fewest swaps we found.';
+  const wl = $('why-list'); wl.innerHTML = '';
+  state.clearMoves.forEach(c => { const gg = p.groups[c.gi], d = document.createElement('div'); d.className = 'why-item'; d.style.setProperty('--gc', GROUP_COLORS[c.gi]); d.style.setProperty('--i', wl.children.length);
+    d.innerHTML = '<b></b><i></i> <span></span>'; d.querySelector('b').textContent = gg.title; d.querySelector('i').textContent = gg.words.join(' → ') + ' —'; d.querySelector('span').textContent = gg.why; wl.appendChild(d); });
+  confetti();
+  $('emoji').textContent = line; state.shareText = `Touchstone sample · ${p.name} · ${state.moves} moves (par ${p.par})${band ? ' · ' + band : ''}\n${line}\n${shareLink(state.moves)}`;
+  const cmp = $('compare'), cc = state.challenge; cmp.hidden = !cc;
+  if (cc) { const d = cc.m - state.moves; cmp.textContent = d > 0 ? `You ${state.moves} · a friend ${cc.m}. You beat them by ${d}.` : d === 0 ? `You ${state.moves} · a friend ${cc.m}. A tie!` : `You ${state.moves} · a friend ${cc.m}. ${-d} behind: try again?`; }
+  $('result').classList.add('show'); say('Solved! ' + mv + '.');
+  note(587, 0.5, 0.14); setTimeout(() => note(784, 0.7, 0.14), 140);
+  $('result').scrollIntoView({ block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' });
+}
+
+function confetti() {
+  if (reduceMotion) return;
+  const w = boardEl.clientWidth, h = boardEl.clientHeight;
+  for (let k = 0; k < 70; k++) {
+    const c = document.createElement('div'); c.className = 'confetti'; c.style.background = GROUP_COLORS[k % 4]; c.style.left = Math.random() * w + 'px';
+    boardEl.appendChild(c);
+    c.animate([{ transform: 'translate(0,0) rotate(0)', opacity: 1 }, { transform: `translate(${(Math.random() - .5) * 120}px, ${h + 20}px) rotate(${Math.random() * 720 - 360}deg)`, opacity: .9 }],
+      { duration: 1400 + Math.random() * 1200, delay: Math.random() * 350, easing: 'cubic-bezier(.3,.6,.5,1)' }).onfinish = () => c.remove();
+  }
+}
+
+/* ----- controls ----- */
+$('reset').addEventListener('click', () => start(state.index));
+$('undo').addEventListener('click', undo);
+$('another').addEventListener('click', () => start((state.index + 1) % PUZZLES.length));
+$('sound').addEventListener('click', (e) => { soundOn = !soundOn; e.currentTarget.setAttribute('aria-pressed', soundOn); e.currentTarget.textContent = soundOn ? 'Sound: on' : 'Sound: off'; if (soundOn) { unlocked = false; unlockAudio(); note(392, 0.25, 0.22); setTimeout(() => note(494, 0.25, 0.22), 140); setTimeout(() => note(587, 0.5, 0.22), 280); } });
+$('copy').addEventListener('click', async (e) => {
+  const text = state.shareText || '';
+  try { await navigator.clipboard.writeText(text); e.currentTarget.textContent = 'Copied'; } catch (err) { window.prompt('Copy your result:', text); }
+  setTimeout(() => { e.currentTarget.textContent = 'Copy my result'; }, 1600);
+});
+window.addEventListener('resize', () => { if (state) { layoutSizes(); render(); } });
+start(challenge ? challenge.p - 1 : 0);
+</script>
+</body>
+</html>
