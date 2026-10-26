@@ -13,10 +13,12 @@
     --accent: #297d73; --accent-ink: #17504a; --accent-soft: rgba(41,125,115,.14);
     --g0: #297d73; --g1: #c98026; --g2: #3b4fa0; --g3: #b83859;
     --ink: #1c1c1e; --sec: rgba(60,60,67,.66); --line: rgba(0,0,0,.10);
-    --tile: #fffdf8; --card: rgba(255,255,255,.62);
+    --tile: #fffdf8; --tile-ink: #211f1a; --board: #ebe3d4;
+    --card: rgba(255,255,255,.72);
     --w0: #f6e9c8; --w1: #dcefe5; --w2: #dfe5f5;
     --serif: ui-serif, "New York", "Iowan Old Style", Georgia, serif;
     --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --rounded: ui-rounded, "SF Pro Rounded", var(--sans);
     --tile-size: 78px; --gap: 8px; --pad: 10px;
   }
   * { box-sizing: border-box; }
@@ -46,27 +48,35 @@
   .game-col { order: -1; }
   @media (min-width: 900px) { .game-col { order: 0; position: sticky; top: 16px; } }
 
-  .card { background: var(--card); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid rgba(41,125,115,.2); border-radius: 18px; padding: 14px; }
+  .card { background: var(--card); backdrop-filter: blur(22px) saturate(1.2); -webkit-backdrop-filter: blur(22px) saturate(1.2);
+           border: 1px solid rgba(255,255,255,.55); border-radius: 20px; padding: 16px 14px 14px;
+           box-shadow: 0 1px 0 rgba(255,255,255,.65) inset, 0 12px 40px rgba(23,80,74,.12), 0 2px 8px rgba(0,0,0,.06); }
   .game-head { display: flex; justify-content: space-between; align-items: baseline; margin: 0 2px 10px; }
-  .game-head h2 { margin: 0; font: 700 20px var(--serif); }
+  .game-head h2 { margin: 0; font: 700 20px var(--serif); letter-spacing: -.01em; }
   .game-head span { font-size: 13px; color: var(--sec); }
   .stats { display: flex; gap: 8px; margin-bottom: 10px; }
-  .pill { flex: 1; background: rgba(255,255,255,.78); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; display: flex; gap: 8px; align-items: center; justify-content: center; font: 800 11px var(--sans); letter-spacing: .05em; color: var(--sec); text-transform: uppercase; white-space: nowrap; }
-  .pill strong { font: 800 17px var(--sans); color: var(--ink); letter-spacing: 0; }
+  .pill { flex: 1; background: rgba(255,255,255,.82); border: 1px solid rgba(0,0,0,.08); border-radius: 12px; padding: 8px 10px;
+          display: flex; gap: 8px; align-items: center; justify-content: center; font: 800 11px var(--sans); letter-spacing: .05em;
+          color: var(--sec); text-transform: uppercase; white-space: nowrap; box-shadow: 0 1px 0 rgba(255,255,255,.9) inset; }
+  .pill strong { font: 800 17px var(--rounded); color: var(--ink); letter-spacing: 0; font-variant-numeric: tabular-nums; }
   .dots { display: inline-flex; gap: 5px; }
   .dots i { width: 11px; height: 11px; border-radius: 50%; background: rgba(0,0,0,.18); display: block; transition: background .3s, transform .3s; }
   .dots i.on { transform: scale(1.15); }
 
-  .board { position: relative; width: 100%; max-width: 460px; margin: 0 auto; border-radius: 16px; background: rgba(224,214,196,.5); border: 1px solid var(--line);
-           height: calc(var(--pad) * 2 + var(--tile-size) * 4 + var(--gap) * 3); touch-action: none; user-select: none; -webkit-user-select: none; }
-  .tile { position: absolute; left: 0; top: 0; width: var(--tile-size); height: var(--tile-size); border-radius: 12px; border: 1.5px solid rgba(0,0,0,.13); background: var(--tile);
-          font: 800 11.5px var(--sans); letter-spacing: .02em; text-transform: uppercase; color: #26241f; padding: 0 3px; display: grid; place-items: center; text-align: center;
-          box-shadow: 0 2px 6px rgba(0,0,0,.09); cursor: pointer; z-index: 2;
-          transition: transform .28s cubic-bezier(.3,1.25,.5,1), background .25s, border-color .25s, box-shadow .25s; -webkit-tap-highlight-color: transparent; }
-  .tile.long { font-size: 10px; letter-spacing: 0; }
-  .tile.xlong { font-size: 8.7px; letter-spacing: 0; }
-  .tile.linked { background: var(--tint, #e3f1ee); border-color: var(--gc, var(--accent)); box-shadow: 0 0 0 2px color-mix(in srgb, var(--gc, var(--accent)) 30%, transparent), 0 0 14px color-mix(in srgb, var(--gc, var(--accent)) 40%, transparent); }
-  .tile.selected { outline: 3px solid #1d5fd6; outline-offset: 2px; z-index: 4; }
+  .board { position: relative; width: 100%; max-width: 460px; margin: 0 auto; border-radius: 16px; background: var(--board);
+           border: 1px solid rgba(0,0,0,.06); box-shadow: 0 1px 0 rgba(255,255,255,.35) inset, 0 8px 24px rgba(0,0,0,.06);
+           height: calc(var(--pad) * 2 + var(--tile-size) * 4 + var(--gap) * 3); touch-action: pan-y; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+  .tile.lift { scale: 1.07; z-index: 6; box-shadow: 0 8px 20px rgba(0,0,0,.22); }
+  .tile { position: absolute; left: 0; top: 0; width: var(--tile-size); height: var(--tile-size); border-radius: 14px; border: 1.5px solid rgba(0,0,0,.11); background: var(--tile);
+          font: 900 12px var(--rounded); letter-spacing: .01em; text-transform: uppercase; color: var(--tile-ink); padding: 0 5px; display: grid; place-items: center; text-align: center;
+          box-shadow: 0 1px 0 rgba(255,255,255,.85) inset, 0 2px 5px rgba(0,0,0,.08); cursor: pointer; z-index: 2;
+          transition: transform .32s cubic-bezier(.34,1.45,.64,1), background .22s, border-color .22s, box-shadow .22s; -webkit-tap-highlight-color: transparent; will-change: transform; }
+  .tile.long { font-size: 10.5px; letter-spacing: 0; }
+  .tile.xlong { font-size: 9px; letter-spacing: 0; }
+  .tile.linked { background: var(--tint, #e3f1ee); border-color: color-mix(in srgb, var(--gc, var(--accent)) 55%, rgba(0,0,0,.12));
+                 box-shadow: 0 0 0 2px color-mix(in srgb, var(--gc, var(--accent)) 28%, transparent), 0 0 16px color-mix(in srgb, var(--gc, var(--accent)) 35%, transparent), 0 1px 0 rgba(255,255,255,.7) inset; }
+  .tile.selected { outline: 3px solid color-mix(in srgb, var(--accent) 70%, #1d5fd6); outline-offset: 2px; z-index: 4; }
+  .tile:active { filter: brightness(.96); }
   .tile.nudge { animation: nudge .3s; }
   .tile.lock { animation: lock .42s ease-out; z-index: 5; }
   .bridge { position: absolute; z-index: 1; background: color-mix(in srgb, var(--gc) 55%, white); border-radius: 4px; pointer-events: none; transition: opacity .2s; }
@@ -131,8 +141,10 @@
   footer { margin-top: 28px; font-size: 12.5px; color: var(--sec); text-align: center; }
 
   @media (prefers-reduced-motion: reduce) {
-    .tile, .dots i { transition: none; } .why-item { animation: none; opacity: 1; } .tile.nudge, .tile.lock, .tile.walk, .strip, .strip::after, .result.show, .toast { animation: none; } .edge { animation: none; opacity: 1; }
+    .tile, .dots i { transition: none; } .why-item { animation: none; opacity: 1; }
+    .tile.nudge, .tile.lock, .tile.walk, .strip, .strip::after, .result.show, .toast { animation: none; } .edge { animation: none; opacity: 1; }
   }
+  @media (max-width: 899px) { .pitch .pitch-title { display: none; } }
   @media (max-width: 380px) { :root { --pad: 8px; --gap: 6px; } .pill { padding: 7px 6px; } }
 </style>
 </head>
@@ -148,7 +160,7 @@
     <div class="hero">
       <div class="pitch">
         <h2 class="pitch-title">Each word leads to the next.</h2>
-        <p>Touchstone is a daily word puzzle. A board of tiles hides four chains of four words, each a little story, like <em>spark &rarr; flame &rarr; smoke &rarr; ash</em>. Swap neighbouring tiles until every chain is in order.</p>
+        <p>Touchstone is a daily word puzzle. Sixteen tiles hide four short chains — each one a sequence everyone already knows, like <em>bean &rarr; grind &rarr; brew &rarr; cup</em>. Swap neighbours until every chain runs in order.</p>
         <p>Try the puzzle on this page. It takes about three minutes.</p>
         <ol class="steps">
           <li><b>1</b><span>Tap a tile, then tap a tile next to it to swap them. (Or drag a tile onto its neighbour.)</span></li>
@@ -220,7 +232,30 @@
 </div>
 
 <script>
-const PUZZLES = [{"name": "Night Out", "par": 9, "target": 18, "groups": [{"title": "Dinner", "words": ["RESERVE", "STARTER", "DESSERT", "RECEIPT"], "why": "You reserve a table, start with a starter, finish with dessert, and the receipt arrives."}, {"title": "Movie", "words": ["SHOWTIME", "TRAILER", "CREDITS", "SEQUEL"], "why": "You check the showtime, the trailers roll, the credits end the film, and the sequel is already teased."}, {"title": "Road trip", "words": ["ITINERARY", "REFUEL", "DETOUR", "SOUVENIR"], "why": "You plan the itinerary, refuel along the way, take a detour, and bring home a souvenir."}, {"title": "Birthday", "words": ["INVITATION", "BALLOONS", "CANDLES", "PRESENTS"], "why": "The invitation goes out, the balloons go up, the candles are lit, and then come the presents."}], "start": ["STARTER", "CREDITS", "ITINERARY", "SHOWTIME", "BALLOONS", "DETOUR", "PRESENTS", "SOUVENIR", "DESSERT", "RECEIPT", "RESERVE", "INVITATION", "SEQUEL", "REFUEL", "TRAILER", "CANDLES"]}, {"groups": [{"title": "Flight", "words": ["CHECKIN", "SECURITY", "BOARDING", "TAKEOFF"], "why": "You check in, get through security, board, and then the plane takes off."}, {"title": "Mail", "words": ["ENVELOPE", "POSTMARK", "MAILBOX", "DOORSTEP"], "why": "A letter is sealed in an envelope, gets its postmark, is dropped in a mailbox, and ends up on your doorstep."}, {"title": "Show", "words": ["AUDITION", "REHEARSAL", "PREMIERE", "ENCORE"], "why": "You audition for a part, rehearse it, open on the premiere, and if it goes well the crowd calls for an encore."}, {"title": "Campfire", "words": ["KINDLING", "BONFIRE", "CRACKLE", "EMBERS"], "why": "Kindling catches, the bonfire builds, it crackles, and it dies down to embers."}], "start": ["BONFIRE", "REHEARSAL", "MAILBOX", "SECURITY", "CHECKIN", "ENVELOPE", "TAKEOFF", "KINDLING", "CRACKLE", "ENCORE", "DOORSTEP", "BOARDING", "PREMIERE", "EMBERS", "AUDITION", "POSTMARK"], "name": "Four Everyday Stories", "par": 9, "target": 18}, {"groups": [{"title": "Rocket", "words": ["COUNTDOWN", "IGNITE", "LIFTOFF", "SPLASHDOWN"], "why": "The countdown ends, the engines ignite, the rocket lifts off, and the capsule finally splashes down."}, {"title": "Fireworks", "words": ["LAUNCH", "FIREWORK", "CONFETTI", "FINALE"], "why": "A shell is launched, the firework bursts, colour rains down like confetti, and the finale ends the show."}, {"title": "Cookout", "words": ["CHARCOAL", "GRILL", "SIZZLE", "BARBECUE"], "why": "Light the charcoal, heat the grill, hear the sizzle, and sit down to the barbecue."}, {"title": "Snow day", "words": ["BLIZZARD", "SNOWBALL", "SLEDGE", "FIREPLACE"], "why": "A blizzard blankets everything, snowballs fly, you go sledding, and then you warm up by the fireplace."}], "start": ["SIZZLE", "SPLASHDOWN", "SNOWBALL", "BARBECUE", "CHARCOAL", "FINALE", "FIREPLACE", "FIREWORK", "LAUNCH", "COUNTDOWN", "GRILL", "IGNITE", "LIFTOFF", "CONFETTI", "SLEDGE", "BLIZZARD"], "name": "Fire and Ice", "par": 8, "target": 16}];
+const PUZZLES_MAIN = [{"name": "Saturday", "par": 8, "target": 16, "groups": [{"title": "Dinner", "words": ["RESERVE", "STARTER", "MAIN", "DESSERT"], "why": "You reserve a table, start with a starter, move on to the main, and finish with dessert."}, {"title": "Movie", "words": ["SHOWTIME", "TRAILER", "FEATURE", "CREDITS"], "why": "Showtime arrives, the trailers play, the feature runs, and the credits roll."}, {"title": "Birthday", "words": ["INVITATION", "PRESENT", "WRAPPING", "PARTY"], "why": "The invitation goes out, you pick a present, you do the wrapping, and then comes the party."}, {"title": "Laundry", "words": ["SORTING", "WASHING", "DRYING", "FOLDING"], "why": "You sort the pile, wash it, dry it, and fold it."}], "start": ["TRAILER", "SORTING", "CREDITS", "MAIN", "RESERVE", "WRAPPING", "DESSERT", "FOLDING", "FEATURE", "WASHING", "PARTY", "PRESENT", "STARTER", "DRYING", "INVITATION", "SHOWTIME"]}, {"name": "Four Everyday Stories", "par": 8, "target": 16, "groups": [{"title": "Flight", "words": ["CHECKIN", "SECURITY", "BOARDING", "TAKEOFF"], "why": "You check in, get through security, board, and then the plane takes off."}, {"title": "Show", "words": ["AUDITION", "REHEARSAL", "PREMIERE", "ENCORE"], "why": "You audition for a part, rehearse it, open on the premiere, and if it goes well the crowd calls for an encore."}, {"title": "School day", "words": ["SCHOOLBUS", "CLASSROOM", "RECESS", "HOMEWORK"], "why": "The school bus drops you off, you sit in the classroom, break for recess, and take homework home."}, {"title": "Photo", "words": ["SHUTTER", "EDITING", "PRINTED", "FRAMED"], "why": "The shutter clicks, you edit the shot, get it printed, and put it in a frame."}], "start": ["REHEARSAL", "SHUTTER", "ENCORE", "BOARDING", "CHECKIN", "RECESS", "TAKEOFF", "FRAMED", "PREMIERE", "EDITING", "HOMEWORK", "CLASSROOM", "SECURITY", "PRINTED", "SCHOOLBUS", "AUDITION"]}, {"name": "Big Days", "par": 8, "target": 16, "groups": [{"title": "Rocket", "words": ["COUNTDOWN", "IGNITE", "LIFTOFF", "SPLASHDOWN"], "why": "The countdown ends, the engines ignite, the rocket lifts off, and the capsule finally splashes down."}, {"title": "Wedding", "words": ["PROPOSAL", "ENGAGEMENT", "CEREMONY", "HONEYMOON"], "why": "A proposal, then the engagement, the ceremony, and finally the honeymoon."}, {"title": "Cookout", "words": ["CHARCOAL", "GRILL", "SIZZLE", "BARBECUE"], "why": "Light the charcoal, heat the grill, hear the sizzle, and sit down to the barbecue."}, {"title": "Garden to table", "words": ["SEEDLING", "HARVESTED", "CHOPPED", "SERVED"], "why": "A seedling grows, it is harvested, chopped, and served."}], "start": ["ENGAGEMENT", "SEEDLING", "HONEYMOON", "LIFTOFF", "COUNTDOWN", "SIZZLE", "SPLASHDOWN", "SERVED", "CEREMONY", "HARVESTED", "BARBECUE", "GRILL", "IGNITE", "CHOPPED", "CHARCOAL", "PROPOSAL"]}];
+/* Cursor's two draft puzzles (2026-10-26), kept for review: open the page with ?puzzles=cursor. Their par is an estimate, not solved. */
+const PUZZLES_CURSOR = [
+  {"name": "Four Easy Chains", "par": 8, "target": 18,
+   "groups": [
+     {"title": "Coffee", "words": ["BEAN", "GRIND", "BREW", "CUP"], "why": "Beans get ground, brewed, and poured into your cup."},
+     {"title": "Campfire", "words": ["SPARK", "FLAME", "SMOKE", "ASH"], "why": "A spark catches, the flame burns, smoke rises, and ash is what is left."},
+     {"title": "Storm", "words": ["CLOUD", "RAIN", "PUDDLE", "SUN"], "why": "Clouds bring rain, rain makes puddles, and the sun comes back after."},
+     {"title": "Letter", "words": ["PEN", "PAPER", "STAMP", "MAIL"], "why": "You write on paper, stamp the envelope, and send it in the mail."}
+   ],
+   "start": ["RAIN", "MAIL", "CLOUD", "SMOKE", "PEN", "GRIND", "CUP", "BREW", "SUN", "SPARK", "STAMP", "FLAME", "ASH", "BEAN", "PUDDLE", "PAPER"]
+  },
+  {"name": "Morning to Night", "par": 7, "target": 16,
+   "groups": [
+     {"title": "Morning", "words": ["WAKE", "ALARM", "SHOWER", "COFFEE"], "why": "You wake up, silence the alarm, shower, and grab coffee."},
+     {"title": "Garden", "words": ["SEED", "SPROUT", "LEAF", "TREE"], "why": "A seed sprouts, leaves appear, and it grows into a tree."},
+     {"title": "Baking", "words": ["EGG", "CRACK", "WHISK", "BATTER"], "why": "Crack an egg, whisk it, and you have batter."},
+     {"title": "Bedtime", "words": ["STAR", "WISH", "DREAM", "SLEEP"], "why": "You see a star, make a wish, drift into a dream, and fall asleep."}
+   ],
+   "start": ["STAR", "WHISK", "TREE", "WISH", "SEED", "SHOWER", "SLEEP", "CRACK", "SPROUT", "BATTER", "ALARM", "DREAM", "COFFEE", "EGG", "LEAF", "WAKE"]
+  }
+];
+PUZZLES_CURSOR.forEach(q => { q.parEstimated = true; });
+const PUZZLES = new URLSearchParams(location.search).get('puzzles') === 'cursor' ? PUZZLES_CURSOR : PUZZLES_MAIN;
 
 /* ---------- Game ---------- */
 const COLS = 4;
@@ -279,9 +314,37 @@ function note(freq, dur = 0.42, vol = 0.22) {
 }
 
 /* ----- state ----- */
-function start(index) {
+/* ----- remember the game on this device (localStorage; nothing is sent anywhere) -----
+   Coming back from another app often reloads the page on a phone, so the game is saved after every move and restored
+   on load. A save older than 12 hours, from the other puzzle set, or that does not match the puzzle is ignored. */
+const SAVE_KEY = 'touchstone-sample-v1', SAVE_MAX_AGE = 12 * 3600 * 1000;
+const SET_NAME = new URLSearchParams(location.search).get('puzzles') === 'cursor' ? 'cursor' : 'main';
+function saveGame() {
+  try {
+    if (!state || state.busy) return;
+    if (state.solved.length === 4) { localStorage.removeItem(SAVE_KEY); return; }
+    localStorage.setItem(SAVE_KEY, JSON.stringify({ v: 1, set: SET_NAME, index: state.index, tiles: state.tiles, solved: state.solved.map(x => x.gi), moves: state.moves, clearMoves: state.clearMoves,
+      history: state.history.map(h => ({ tiles: h.tiles, solved: h.solved.map(x => x.gi), clearMoves: h.clearMoves, lastLinks: h.lastLinks })), at: Date.now() }));
+  } catch (e) { /* storage blocked (private mode): the game still works, it just is not remembered */ }
+}
+function loadSaved() {
+  try {
+    const d = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null');
+    if (!d || d.v !== 1 || d.set !== SET_NAME || !(Date.now() - d.at < SAVE_MAX_AGE)) return null;
+    const p = PUZZLES[d.index]; if (!p || !Array.isArray(d.tiles) || !Array.isArray(d.solved)) return null;
+    if (d.solved.some(gi => !Number.isInteger(gi) || gi < 0 || gi >= p.groups.length) || new Set(d.solved).size !== d.solved.length) return null;
+    const gone = d.solved.flatMap(gi => p.groups[gi].words);
+    const expected = p.groups.flatMap(g => g.words).filter(w => !gone.includes(w));
+    if (d.tiles.length !== expected.length || [...d.tiles].sort().join() !== [...expected].sort().join()) return null;
+    return d;
+  } catch (e) { return null; }
+}
+function start(index, saved = null) {
   const p = PUZZLES[index];
-  state = { index, tiles: p.start.slice(), solved: [], moves: 0, clearMoves: [], selected: null, busy: false, lastLinks: 0, history: [] };
+  state = saved
+    ? { index, tiles: saved.tiles.slice(), solved: saved.solved.map(gi => ({ gi, el: null })), moves: saved.moves | 0, clearMoves: Array.isArray(saved.clearMoves) ? saved.clearMoves : [], selected: null, busy: false, lastLinks: 0,
+        history: (saved.history || []).map(h => ({ tiles: h.tiles, solved: h.solved.map(gi => ({ gi, el: null })), clearMoves: h.clearMoves, lastLinks: h.lastLinks })) }
+    : { index, tiles: p.start.slice(), solved: [], moves: 0, clearMoves: [], selected: null, busy: false, lastLinks: 0, history: [] };
   $('result').classList.remove('show');
   const ch = $('challenge'), cc = challenge && challenge.p - 1 === index ? challenge : null;
   state.challenge = cc; ch.hidden = !cc; if (cc) ch.textContent = 'A friend solved this puzzle in ' + cc.m + ' moves. Can you beat that?';
@@ -290,7 +353,9 @@ function start(index) {
   boardEl.innerHTML = ''; tileEls = new Map();
   layoutSizes();
   render(true);
-  say('Tap a tile, then a neighbour, to swap them.');
+  state.lastLinks = analyse().reduce((n, g) => n + (g.solved ? 0 : g.links.filter(l => l.ok).length), 0);
+  say(saved ? 'Welcome back: your game was saved on this device.' : 'Tap a tile, then a neighbour, to swap them.');
+  saveGame();
 }
 /* Challenge links (spec: TouchstoneShareLinkSpec.md): ?p=<sample puzzle number>&m=<friend's moves>. Both are checked;
    anything else is ignored and the page works as normal. The link carries no names, ids or answers. */
@@ -418,24 +483,41 @@ function focusTile(i) { const el = [...tileEls.values()].find(t => Number(t.data
 /* Path drag, like the app: press a tile and drag across neighbours; each cell crossed swaps (one move each), and
    chains clear when you let go. Tap-tap still works. */
 let drag = null, dragHandled = false;
+const HOLD_MS = 170;   // on a touch screen, hold a tile this long to pick it up; moving sooner just scrolls the page
 function cellAt(clientX, clientY) {
   const r = boardEl.getBoundingClientRect(), m = metrics(), x = clientX - r.left - m.pad, y = clientY - r.top - m.pad, step = m.size + m.gap;
   const col = Math.floor(x / step), row = Math.floor(y / step);
   if (col < 0 || col >= COLS || row < 0 || x - col * step > m.size || y - row * step > m.size) return null;
   const i = row * COLS + col; return i < state.tiles.length ? i : null;
 }
+function liftTile(i, on) { const w = state.tiles[i], el = tileEls.get(w); if (el) el.classList.toggle('lift', on); }
 boardEl.addEventListener('pointerdown', (e) => {
   const t = e.target.closest('.tile'); if (!t || state.busy) return;
-  drag = { i: Number(t.dataset.index), x: e.clientX, y: e.clientY, steps: 0 }; dragHandled = false;
+  const touch = e.pointerType === 'touch';
+  drag = { i: Number(t.dataset.index), x: e.clientX, y: e.clientY, steps: 0, touch, armed: !touch, timer: null };
+  dragHandled = false;
+  if (touch) drag.timer = setTimeout(() => { if (drag) { drag.armed = true; liftTile(drag.i, true); if (navigator.vibrate) navigator.vibrate(10); } }, HOLD_MS);
 });
 boardEl.addEventListener('pointermove', (e) => {
   if (!drag || state.busy) return;
-  if (drag.steps === 0 && Math.hypot(e.clientX - drag.x, e.clientY - drag.y) < 14) return;
+  if (!drag.armed) {   // touch, not picked up yet: any real movement means the person is scrolling
+    if (Math.hypot(e.clientX - drag.x, e.clientY - drag.y) > 10) { clearTimeout(drag.timer); drag = null; }
+    return;
+  }
+  if (drag.steps === 0 && !drag.touch && Math.hypot(e.clientX - drag.x, e.clientY - drag.y) < 14) return;
   const j = cellAt(e.clientX, e.clientY);
   if (j === null || j === drag.i) return;
-  if (adjacent(drag.i, j)) { ensureAudio(); state.selected = null; dragHandled = true; swap(drag.i, j, true); drag.i = j; drag.steps++; }
+  if (adjacent(drag.i, j)) { ensureAudio(); state.selected = null; dragHandled = true; liftTile(drag.i, false); swap(drag.i, j, true); drag.i = j; drag.steps++; liftTile(j, true); }
 });
-function endDrag() { if (!drag) return; const d = drag; drag = null; if (d.steps) { dragHandled = true; settle(); } setTimeout(() => { dragHandled = false; }, 0); }
+/* Once a tile is picked up the page must not scroll under the finger: the browser only allows this from a non-passive touchmove. */
+boardEl.addEventListener('touchmove', (e) => { if (drag && drag.armed) e.preventDefault(); }, { passive: false });
+boardEl.addEventListener('contextmenu', (e) => { if (drag && drag.touch) e.preventDefault(); });
+function endDrag() {
+  if (!drag) return; const d = drag; drag = null; clearTimeout(d.timer);
+  [...tileEls.values()].forEach(el => el.classList.remove('lift'));
+  if (d.steps) { dragHandled = true; settle(); }
+  setTimeout(() => { dragHandled = false; }, 0);
+}
 window.addEventListener('pointerup', endDrag);
 window.addEventListener('pointercancel', endDrag);
 
@@ -444,7 +526,7 @@ function undo() {
   if (state.busy || !state.history.length) return;
   const h = state.history.pop(); ensureAudio();
   state.tiles = h.tiles; state.solved = h.solved; state.clearMoves = h.clearMoves; state.lastLinks = h.lastLinks; state.selected = null; state.focusIndex = 0;
-  $('result').classList.remove('show'); render(); tick();
+  $('result').classList.remove('show'); render(); tick(); saveGame();
   say('Undid your last move. (As in the app, the move still counts.)');
 }
 async function swap(i, j, deferClear = false) {
@@ -508,6 +590,7 @@ async function settle() {
   }
   state.lastLinks = analyse().reduce((s, g) => s + (g.solved ? 0 : g.links.filter(l => l.ok).length), 0);
   state.busy = false;
+  saveGame();
   if (state.solved.length === 4) win(); else render();
 }
 function win() {
@@ -515,7 +598,7 @@ function win() {
   state.clearMoves.forEach(c => { line += EMOJI[c.gi].repeat(Math.max(1, c.move - prev)); prev = c.move; });
   const mv = state.moves + (state.moves === 1 ? ' move' : ' moves');
   const band = state.moves <= p.target ? 'Quick solve' : state.moves <= Math.floor(p.target * 1.4) ? 'Solid solve' : '';
-  $('result-title').textContent = 'Solved in ' + mv + '. Par is ' + p.par + '.';
+  $('result-title').textContent = 'Solved in ' + mv + '. Par is ' + (p.parEstimated ? 'about ' + p.par + ' (an estimate)' : p.par) + '.';
   $('result-line').textContent = (band ? band + '. ' : '') + 'You found four stories: ' + state.clearMoves.map(c => p.groups[c.gi].title).join(', ') + '. Par is the fewest swaps we found.';
   const wl = $('why-list'); wl.innerHTML = '';
   state.clearMoves.forEach(c => { const gg = p.groups[c.gi], d = document.createElement('div'); d.className = 'why-item'; d.style.setProperty('--gc', GROUP_COLORS[c.gi]); d.style.setProperty('--i', wl.children.length);
@@ -543,7 +626,7 @@ function confetti() {
 /* ----- controls ----- */
 $('reset').addEventListener('click', () => start(state.index));
 $('undo').addEventListener('click', undo);
-$('another').addEventListener('click', () => start((state.index + 1) % PUZZLES.length));
+$('another').addEventListener('click', () => { start((state.index + 1) % PUZZLES.length); window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' }); });
 $('sound').addEventListener('click', (e) => { soundOn = !soundOn; e.currentTarget.setAttribute('aria-pressed', soundOn); e.currentTarget.textContent = soundOn ? 'Sound: on' : 'Sound: off'; if (soundOn) { unlocked = false; unlockAudio(); note(392, 0.25, 0.22); setTimeout(() => note(494, 0.25, 0.22), 140); setTimeout(() => note(587, 0.5, 0.22), 280); } });
 $('copy').addEventListener('click', async (e) => {
   const text = state.shareText || '';
@@ -551,7 +634,8 @@ $('copy').addEventListener('click', async (e) => {
   setTimeout(() => { e.currentTarget.textContent = 'Copy my result'; }, 1600);
 });
 window.addEventListener('resize', () => { if (state) { layoutSizes(); render(); } });
-start(challenge ? challenge.p - 1 : 0);
+{ const saved = loadSaved(), want = challenge ? challenge.p - 1 : null;
+  if (saved && (want === null || want === saved.index)) start(saved.index, saved); else start(want ?? 0); }
 </script>
 </body>
 </html>
