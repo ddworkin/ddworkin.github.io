@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>A friend shared a Touchstone puzzle</title>
+  <meta name="description" content="A friend shared their Touchstone result. Warm up with a sample puzzle, then try the daily puzzle in the app.">
+  <meta name="theme-color" content="#fbf6ec" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#161513" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="/touchstone/media/icon.png">
+  <link rel="apple-touch-icon" href="/touchstone/media/icon.png">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Touchstone: Daily Word Puzzle">
+  <meta property="og:description" content="A friend shared their Touchstone result. Think you can match it?">
+  <meta property="og:image" content="https://ddworkin.github.io/touchstone/media/links.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="stylesheet" href="/touchstone/landing.css">
+  <style>
+    .proof { list-style: none; display: flex; flex-wrap: wrap; gap: 6px 18px; padding: 0; margin: 22px 0 0; color: var(--muted); font-size: 15px; }
+    .proof li::before { content: "✓"; color: var(--sage); font-weight: 700; margin-right: 6px; }
+  </style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="wrap brand">
+  <img src="/touchstone/media/icon.png" alt="" width="44" height="44">
+  <span>Touchstone</span>
+</header>
+
+<main id="main">
+  <section class="wrap hero" aria-labelledby="play-title">
+    <div>
+      <p class="eyebrow" id="play-eyebrow">A daily word puzzle for iPhone and iPad</p>
+      <h1 id="play-title">Slide the words.<br>Light up the chain.</h1>
+      <p class="lede" id="play-lede">Touchstone is a daily word puzzle. Slide the tiles so each row becomes a chain where every word leads to the next. It takes about three minutes.</p>
+      <div class="actions">
+        <a class="btn btn-primary" href="/touchstone/try/">Try a sample puzzle</a>
+        <a class="btn btn-secondary" href="https://testflight.apple.com/join/3HbEgX55">Join the beta on TestFlight</a>
+      </div>
+      <ul class="proof" aria-label="About Touchstone">
+        <li>A new puzzle every day</li>
+        <li>Free, no account</li>
+        <li>Gets harder through the week</li>
+      </ul>
+    </div>
+    <div>
+      <div class="phone">
+        <video id="gameplay" muted loop playsinline preload="metadata"
+               poster="/touchstone/media/gameplay-poster.jpg" width="600" height="1304"
+               aria-label="A puzzle being solved: tiles swap, linked words glow, and each finished chain clears into a row at the bottom until the board is solved.">
+          <source src="/touchstone/media/gameplay.mp4" type="video/mp4">
+        </video>
+        <button class="video-toggle" id="video-toggle" type="button" aria-label="Play gameplay video" hidden>▶</button>
+      </div>
+      <p class="caption">Every word leads to the next:</p>
+      <div class="chain" aria-label="Example chain: kettle, boil, tea, cup">
+        <span class="tile lit">KETTLE</span><span class="arrow" aria-hidden="true">→</span>
+        <span class="tile lit">BOIL</span><span class="arrow" aria-hidden="true">→</span>
+        <span class="tile lit">TEA</span><span class="arrow" aria-hidden="true">→</span>
+        <span class="tile lit">CUP</span>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap">
+  <nav aria-label="Touchstone links">
+    <a href="/touchstone/">About Touchstone</a>
+    <a href="/touchstone/privacy/">Privacy</a>
+    <a href="/touchstone/support/">Support</a>
+  </nav>
+  <p>© 2026 David Dworkin.</p>
+</footer>
+
+<script>
+  /* Share links: ?p=<daily puzzle number>&m=<the friend's moves>. Both are checked; anything else leaves the plain
+     page. The link carries no names, ids or answers, and this page sets no cookies and runs no analytics. */
+  (function () {
+    var q = new URLSearchParams(location.search);
+    var p = Number(q.get('p')), m = Number(q.get('m'));
+    var pOk = Number.isInteger(p) && p >= 1 && p <= 9999;
+    if (!pOk) return;
+    var mOk = Number.isInteger(m) && m >= 1 && m <= 500;
+    document.getElementById('play-eyebrow').textContent = 'A friend shared a result';
+    document.getElementById('play-title').textContent = mOk
+      ? 'A friend solved Touchstone #' + p + ' in ' + m + ' moves. Can you match that?'
+      : 'A friend solved Touchstone #' + p + '. Can you match that?';
+    document.getElementById('play-lede').textContent =
+      'Touchstone is a daily word puzzle: slide the tiles so each row becomes a chain where every word leads to the next. Warm up with a sample here, then try #' + p + ' in the app.';
+  })();
+
+  // Autoplay the gameplay loop only when motion is welcome and it's on screen.
+  (function () {
+    var video = document.getElementById('gameplay');
+    var toggle = document.getElementById('video-toggle');
+    if (!video) return;
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var userPaused = false;
+
+    function setToggle() {
+      toggle.textContent = video.paused ? '▶' : '❚❚';
+      toggle.setAttribute('aria-label', video.paused ? 'Play gameplay video' : 'Pause gameplay video');
+    }
+    function tryPlay() {
+      var p = video.play();
+      if (p && p.catch) p.catch(function () { toggle.hidden = false; setToggle(); });
+    }
+
+    toggle.hidden = false;
+    toggle.addEventListener('click', function () {
+      if (video.paused) { userPaused = false; tryPlay(); } else { userPaused = true; video.pause(); }
+    });
+    video.addEventListener('play', setToggle);
+    video.addEventListener('pause', setToggle);
+    setToggle();
+
+    if (reduce.matches || !('IntersectionObserver' in window)) return;
+    new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting && !userPaused) tryPlay();
+        else if (!e.isIntersecting) video.pause();
+      });
+    }, { threshold: 0.4 }).observe(video);
+  })();
+</script>
+</body>
+</html>
