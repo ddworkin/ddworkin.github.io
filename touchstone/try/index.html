@@ -37,6 +37,23 @@
   .todo::after { content: "placeholder link"; position: absolute; left: 50%; bottom: -19px; transform: translateX(-50%); white-space: nowrap;
                  font: 600 10px var(--sans); color: #a33; text-transform: uppercase; letter-spacing: .05em; }
 
+  /* End-of-set reel: shown once all sample puzzles are solved. */
+  .reel { margin-top: 18px; padding-top: 16px; border-top: 1px solid rgba(0,0,0,.1); }
+  .reel h4 { margin: 0 0 4px; font: 700 18px var(--serif); }
+  .reel > p { margin: 0 0 12px; color: var(--sec); font-size: 14px; }
+  .reel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .reel figure { margin: 0; }
+  .reel video { width: 100%; height: auto; display: block; border-radius: 16px; background: #e9e2d4; box-shadow: 0 6px 18px rgba(0,0,0,.18); aspect-ratio: 600 / 1304; }
+  .reel figcaption { margin-top: 8px; font-size: 13px; line-height: 1.35; color: var(--sec); }
+  .reel figcaption b { display: block; color: var(--ink); font-size: 13.5px; }
+  .reel-list { margin: 0 0 14px; padding-left: 20px; font-size: 14px; color: var(--sec); display: grid; gap: 4px; }
+  .reel-list b { color: var(--ink); }
+  .reel-more { margin: 12px 0 0 !important; font-size: 14px; }
+  .reel-more a { color: var(--accent-ink); font-weight: 700; }
+  /* Desktop: once solved, the result moves into the left column so the page does not grow one tall column on the right. */
+  .hero.solved .pitch > :not(#result-slot) { display: none; }
+  #result-slot > .result { margin-top: 0; }
+  @media (max-width: 420px) { .reel-grid { gap: 8px; } .reel figcaption { font-size: 12px; } }
   /* Hero: copy on the left, the game on the right (desktop); game first (phone). */
   .hero { display: grid; gap: 24px; grid-template-columns: 1fr; align-items: start; }
   @media (min-width: 900px) { .hero { grid-template-columns: 1fr 480px; gap: 48px; padding-top: 12px; } }
@@ -159,6 +176,7 @@
     <div class="headline"><h1>Sixteen words. Four stories. Put each in order.</h1><p>Swap neighbouring tiles. A word glows when it touches the one it leads to.</p></div>
     <div class="hero">
       <div class="pitch">
+        <div id="result-slot"></div>
         <h2 class="pitch-title">Each word leads to the next.</h2>
         <p>Touchstone is a daily word puzzle. Sixteen tiles hide four short chains — each one a sequence everyone already knows, like <em>bean &rarr; grind &rarr; brew &rarr; cup</em>. Swap neighbours until every chain runs in order.</p>
         <p>Try the puzzle on this page. It takes about three minutes.</p>
@@ -197,6 +215,26 @@
               <button class="btn ghost small" id="copy" type="button">Copy my result</button>
               <button class="btn ghost small" id="another" type="button">Try another puzzle</button>
             </div>
+            <section class="reel" id="reel" hidden aria-labelledby="reel-h">
+              <h4 id="reel-h">You've played every sample puzzle. Now try the full game.</h4>
+              <ul class="reel-list">
+                <li><b>A new puzzle every day,</b> the same for everyone: gentle on Monday, harder as the week goes on.</li>
+                <li><b>More than chains:</b> hubs, stars and loops, like the one in the clip.</li>
+                <li><b>Ten collections,</b> each with its own look, plus six easy warm-ups to start.</li>
+                <li><b>Streaks, Rush mode and a Home Screen widget</b> to keep it a habit.</li>
+              </ul>
+              <div class="reel-grid">
+                <figure>
+                  <video muted loop playsinline preload="none" poster="../media/gameplay-poster.jpg" data-src="../media/gameplay.mp4" aria-label="Screen recording of the app clearing an entire board"></video>
+                  <figcaption><b>Clear a whole board</b>Link the words, watch each chain lock in, with sound and haptics.</figcaption>
+                </figure>
+                <figure>
+                  <video muted loop playsinline preload="none" poster="../media/shapes-poster.jpg" data-src="../media/shapes.mp4" aria-label="Screen recording of the app solving a star-shaped puzzle"></video>
+                  <figcaption><b>Not just chains</b>A star (one word linking three others), then a loop that closes on itself.</figcaption>
+                </figure>
+              </div>
+              <p class="reel-more"><a href="#why" id="see-features">See everything the app does</a></p>
+            </section>
             <div class="row" style="margin-top:14px">
               <a class="btn primary" href="https://ddworkin.github.io/touchstone/#beta" data-cta>Try the daily puzzle</a>
               <p style="margin-bottom:20px">That was one sample. The app gives you a new one every day, a little harder as the week goes on.</p>
@@ -345,7 +383,7 @@ function start(index, saved = null) {
     ? { index, tiles: saved.tiles.slice(), solved: saved.solved.map(gi => ({ gi, el: null })), moves: saved.moves | 0, clearMoves: Array.isArray(saved.clearMoves) ? saved.clearMoves : [], selected: null, busy: false, lastLinks: 0,
         history: (saved.history || []).map(h => ({ tiles: h.tiles, solved: h.solved.map(gi => ({ gi, el: null })), clearMoves: h.clearMoves, lastLinks: h.lastLinks })) }
     : { index, tiles: p.start.slice(), solved: [], moves: 0, clearMoves: [], selected: null, busy: false, lastLinks: 0, history: [] };
-  $('result').classList.remove('show');
+  $('result').classList.remove('show'); placeResult();
   const ch = $('challenge'), cc = challenge && challenge.p - 1 === index ? challenge : null;
   state.challenge = cc; ch.hidden = !cc; if (cc) ch.textContent = 'A friend solved this puzzle in ' + cc.m + ' moves. Can you beat that?';
   $('which').textContent = 'Puzzle ' + (index + 1) + ' of ' + PUZZLES.length;
@@ -526,7 +564,7 @@ function undo() {
   if (state.busy || !state.history.length) return;
   const h = state.history.pop(); ensureAudio();
   state.tiles = h.tiles; state.solved = h.solved; state.clearMoves = h.clearMoves; state.lastLinks = h.lastLinks; state.selected = null; state.focusIndex = 0;
-  $('result').classList.remove('show'); render(); tick(); saveGame();
+  $('result').classList.remove('show'); placeResult(); render(); tick(); saveGame();
   say('Undid your last move. (As in the app, the move still counts.)');
 }
 async function swap(i, j, deferClear = false) {
@@ -607,9 +645,37 @@ function win() {
   $('emoji').textContent = line; state.shareText = `Touchstone sample · ${p.name} · ${state.moves} moves (par ${p.par})${band ? ' · ' + band : ''}\n${line}\n${shareLink(state.moves)}`;
   const cmp = $('compare'), cc = state.challenge; cmp.hidden = !cc;
   if (cc) { const d = cc.m - state.moves; cmp.textContent = d > 0 ? `You ${state.moves} · a friend ${cc.m}. You beat them by ${d}.` : d === 0 ? `You ${state.moves} · a friend ${cc.m}. A tie!` : `You ${state.moves} · a friend ${cc.m}. ${-d} behind: try again?`; }
-  $('result').classList.add('show'); say('Solved! ' + mv + '.');
+  $('reel').hidden = true;
+  const setDone = markDone(state.index);
+  $('another').textContent = setDone ? 'Play the puzzles again' : 'Next puzzle';
+  if (setDone) showReel();
+  $('result').classList.add('show'); placeResult(); say('Solved! ' + mv + '.');
   note(587, 0.5, 0.14); setTimeout(() => note(784, 0.7, 0.14), 140);
   $('result').scrollIntoView({ block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' });
+}
+
+/* ----- end-of-set reel: once every sample puzzle has been solved on this device, show recordings of the app -----
+   Videos are only fetched at that point (preload none). Reduced motion gets controls instead of autoplay. */
+const DONE_KEY = 'touchstone-sample-done';
+/* Records that puzzle `index` was solved and says whether every sample puzzle now has been. Remembered on this device for
+   12 hours, like the saved game, so a visitor who returns another day starts the set fresh. */
+function markDone(index) {
+  let done = [];
+  try { const d = JSON.parse(localStorage.getItem(DONE_KEY) || 'null'); if (d && Date.now() - d.at < SAVE_MAX_AGE && Array.isArray(d.solved)) done = d.solved; } catch (e) { done = []; }
+  if (!done.includes(index)) done.push(index);
+  try { localStorage.setItem(DONE_KEY, JSON.stringify({ solved: done, at: Date.now() })); } catch (e) { /* not remembered in private mode */ }
+  return PUZZLES.every((_, i) => done.includes(i));
+}
+function showReel() {
+  const reel = $('reel'); if (!reel.hidden) return;
+  reel.hidden = false;
+  reel.querySelectorAll('video').forEach(v => {
+    if (!v.getAttribute('src')) v.src = v.dataset.src;
+    if (reduceMotion) { v.controls = true; return; }
+    if (v._io) return;
+    const io = new IntersectionObserver((es) => es.forEach(en => { if (en.isIntersecting) { v.play().catch(() => {}); } else { v.pause(); } }), { threshold: 0.4 });
+    io.observe(v); v._io = io;
+  });
 }
 
 function confetti() {
@@ -622,6 +688,17 @@ function confetti() {
       { duration: 1400 + Math.random() * 1200, delay: Math.random() * 350, easing: 'cubic-bezier(.3,.6,.5,1)' }).onfinish = () => c.remove();
   }
 }
+
+/* ----- desktop layout: the solved panel (why these words, the clips) moves to the left column, under the board's
+   sticky card, instead of making the right column taller than the screen. Phones keep it under the board. ----- */
+const wideQuery = window.matchMedia('(min-width: 900px)');
+const resultEl = $('result'), resultHome = resultEl.parentNode;
+function placeResult() {
+  const solved = resultEl.classList.contains('show'), wide = wideQuery.matches && solved;
+  document.querySelector('.hero').classList.toggle('solved', wide);
+  (wide ? $('result-slot') : resultHome).appendChild(resultEl);
+}
+wideQuery.addEventListener('change', placeResult);
 
 /* ----- controls ----- */
 $('reset').addEventListener('click', () => start(state.index));
