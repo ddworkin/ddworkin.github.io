@@ -177,6 +177,14 @@ p { margin: 0 0 12px; }
 }
 .beta .actions { justify-content: center; }
 
+/* "Tell me who you are" note beside the beta links */
+.hello {
+  margin: 20px auto 0; max-width: 34rem; padding: 14px 18px; border-radius: 16px; text-align: left;
+  background: color-mix(in srgb, var(--sage) 14%, var(--surface)); border: 1px solid color-mix(in srgb, var(--sage) 40%, var(--rule));
+  font-size: 15px; line-height: 1.5;
+}
+.hello a { font-weight: 600; }
+
 footer { padding-block: 32px 48px; color: var(--muted); font-size: 14px; text-align: center; }
 footer a { color: inherit; }
 footer nav { display: flex; justify-content: center; gap: 18px; margin-bottom: 8px; }
