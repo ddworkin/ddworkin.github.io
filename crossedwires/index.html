@@ -2,32 +2,300 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Crossed Wires: Matching Puzzle</title>
-  <meta name="description" content="A visual matching puzzle: connect each pair with a glowing wire.">
-  <link rel="stylesheet" href="/assets/site.css">
+  <meta name="description" content="A matching puzzle for iPhone. Connect each word or picture to its partner with a glowing wire. A new puzzle every day. Free to play, with an optional one-time Pro unlock.">
+  <meta name="theme-color" content="#f5f3fb" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#100e1c" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="/crossedwires/media/icon.png">
+  <link rel="apple-touch-icon" href="/crossedwires/media/icon.png">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Crossed Wires: Matching Puzzle">
+  <meta property="og:description" content="Connect each pair with a glowing wire. Wires may cross. A wrong one costs a try.">
+  <meta property="og:url" content="https://ddworkin.github.io/crossedwires/">
+  <meta property="og:image" content="https://ddworkin.github.io/crossedwires/media/icon.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="stylesheet" href="/crossedwires/landing.css">
 </head>
 <body>
-<main>
-  <header>
-    <p class="eyebrow"><a href="/">Apps by David Dworkin</a> · Crossed Wires</p>
-    <h1>Crossed Wires</h1>
-    <p class="meta">A matching puzzle for iPhone</p>
-  </header>
+<a class="skip" href="#main">Skip to content</a>
 
-  <div class="summary">
-    <p>Connect each word or picture on the left to its partner on the right, drawing glowing wires between them.
-    Sooner or later two wires cross, and a wrong match costs you. A new puzzle every day, a practice library, and
-    guided Journeys that grow harder as you go.</p>
-  </div>
+<header class="wrap brand">
+  <img src="/crossedwires/media/icon.png" alt="" width="44" height="44">
+  <span>Crossed Wires</span>
+</header>
 
-  <h2>Status</h2>
-  <p>Crossed Wires is in early testing and is not on the App Store yet. Questions or want to try it?
-  <a href="mailto:ddworkin.apps@icloud.com?subject=Crossed%20Wires">ddworkin.apps@icloud.com</a>.</p>
+<main id="main">
 
-  <p><a href="/crossedwires/privacy/">Privacy policy</a> · <a href="/crossedwires/support/">Support</a></p>
+  <section class="wrap hero" aria-labelledby="hero-title">
+    <div>
+      <p class="eyebrow">A matching puzzle for iPhone</p>
+      <h1 id="hero-title">Draw the wire.<br>Let it cross.</h1>
+      <p class="lede">Two columns. Each word or picture has one partner. You draw a glowing line between them. Wires are allowed to cross, and a wrong match costs a try. Most rounds take about a minute.</p>
+      <div class="actions">
+        <a class="btn btn-primary" href="mailto:ddworkin.apps@icloud.com?subject=Crossed%20Wires%3A%20I%27d%20like%20to%20try%20it">Ask to try it</a>
+        <a class="btn btn-secondary" href="#how">How it plays</a>
+      </div>
+    </div>
+    <figure class="board-wrap">
+      <div class="board">
+        <svg viewBox="0 0 380 260" role="img" aria-labelledby="board-title" width="380" height="260">
+          <title id="board-title">An illustrated solved board. Kettle connects to tea, seed to sprout, router to laptop, and drum to beat. The wires cross.</title>
+          <path class="wire" pathLength="100" d="M124 36 C 190 36, 200 172, 256 172"/>
+          <path class="wire" pathLength="100" d="M124 104 C 180 104, 200 36, 256 36"/>
+          <path class="wire" pathLength="100" d="M124 172 C 190 172, 190 240, 256 240"/>
+          <path class="wire" pathLength="100" d="M124 240 C 175 240, 205 104, 256 104"/>
+          <circle class="node" cx="112" cy="36" r="13"/>
+          <circle class="node" cx="112" cy="104" r="13"/>
+          <circle class="node" cx="112" cy="172" r="13"/>
+          <circle class="node" cx="112" cy="240" r="13"/>
+          <circle class="node" cx="268" cy="36" r="13"/>
+          <circle class="node" cx="268" cy="104" r="13"/>
+          <circle class="node" cx="268" cy="172" r="13"/>
+          <circle class="node" cx="268" cy="240" r="13"/>
+          <text class="label" x="90" y="41" text-anchor="end">KETTLE</text>
+          <text class="label" x="90" y="109" text-anchor="end">SEED</text>
+          <text class="label" x="90" y="177" text-anchor="end">ROUTER</text>
+          <text class="label" x="90" y="245" text-anchor="end">DRUM</text>
+          <text class="label" x="290" y="41" text-anchor="start">SPROUT</text>
+          <text class="label" x="290" y="109" text-anchor="start">BEAT</text>
+          <text class="label" x="290" y="177" text-anchor="start">TEA</text>
+          <text class="label" x="290" y="245" text-anchor="start">LAPTOP</text>
+        </svg>
+      </div>
+      <figcaption class="caption">Wires may cross. A wrong one costs a try.</figcaption>
+    </figure>
+  </section>
 
-  <footer>© 2026 David Dworkin</footer>
+  <section id="how" class="wrap" aria-labelledby="how-title">
+    <p class="eyebrow">How it plays</p>
+    <h2 id="how-title">Easy to learn. Satisfying when it snaps.</h2>
+    <p class="lede">No typing and no letter grid. You connect pairs, and the board tells you immediately.</p>
+    <ol class="steps">
+      <li>
+        <span class="step-num" aria-hidden="true">1</span>
+        <div>
+          <h3>Find the partner</h3>
+          <p>Words or pictures sit in two columns. Kettle belongs with tea. A router belongs with a laptop. Every tile has exactly one match.</p>
+        </div>
+      </li>
+      <li>
+        <span class="step-num" aria-hidden="true">2</span>
+        <div>
+          <h3>Draw the wire</h3>
+          <p>Tap the two tiles, or drag from one to the other. A correct wire glows and stays. The lines are allowed to cross on their way across.</p>
+        </div>
+      </li>
+      <li>
+        <span class="step-num" aria-hidden="true">3</span>
+        <div>
+          <h3>Mind the misses</h3>
+          <p>A wrong wire flashes and costs a try. Clear every pair before you run out. On a perfect round, the board celebrates.</p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section id="themes" class="wrap" aria-labelledby="themes-title">
+    <p class="eyebrow">The wires have a look</p>
+    <h2 id="themes-title">Each board dresses for the puzzle</h2>
+    <p class="lede">The same match can feel like a circuit, a fuse, a vine, a studio cable, or a docking tether. Finish the board and the celebration matches the theme.</p>
+    <ul class="gallery" tabindex="0" aria-label="Wire themes, swipe to see more">
+      <li><figure>
+        <div class="swatch highway" aria-hidden="true">
+          <svg viewBox="0 0 220 48">
+            <path d="M8 24 H212" fill="none" stroke="#163044" stroke-width="6" stroke-linecap="round"/>
+            <path d="M8 24 H212" fill="none" stroke="#5ee0ff" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="10 14"/>
+            <circle cx="70" cy="24" r="5" fill="#5ee0ff"/>
+            <circle cx="148" cy="24" r="5" fill="#5ee0ff"/>
+          </svg>
+        </div>
+        <figcaption><strong>Data highway</strong>Packets ride a dark bus and bloom cyan when they arrive.</figcaption>
+      </figure></li>
+      <li><figure>
+        <div class="swatch fuse" aria-hidden="true">
+          <svg viewBox="0 0 220 48">
+            <path d="M8 26 C 70 18, 140 34, 212 22" fill="none" stroke="#3a2418" stroke-width="6" stroke-linecap="round"/>
+            <circle cx="150" cy="28" r="6" fill="#ff7a3c"/>
+            <circle cx="168" cy="20" r="2.5" fill="#ffd2a8"/>
+            <circle cx="138" cy="16" r="2" fill="#ffb080"/>
+          </svg>
+        </div>
+        <figcaption><strong>Firecracker fuse</strong>An ember runs the fuse and pops at the far end.</figcaption>
+      </figure></li>
+      <li><figure>
+        <div class="swatch glass" aria-hidden="true">
+          <svg viewBox="0 0 220 48">
+            <path d="M8 30 C 60 10, 140 42, 212 16" fill="none" stroke="#7ddc6a" stroke-width="4" stroke-linecap="round"/>
+            <circle cx="168" cy="20" r="6" fill="#d8f5a8"/>
+            <circle cx="184" cy="14" r="3.5" fill="#f3ffe0"/>
+          </svg>
+        </div>
+        <figcaption><strong>Glasshouse</strong>A vine draws itself, then flowers when the pair is right.</figcaption>
+      </figure></li>
+      <li><figure>
+        <div class="swatch studio" aria-hidden="true">
+          <svg viewBox="0 0 220 48">
+            <path d="M8 24 H212" fill="none" stroke="#6a3a78" stroke-width="3" stroke-linecap="round"/>
+            <path d="M16 24 V14 M28 24 V32 M40 24 V10 M52 24 V28 M64 24 V16 M76 24 V34 M88 24 V12 M100 24 V26 M112 24 V18 M124 24 V30 M136 24 V14 M148 24 V22 M160 24 V12 M172 24 V32 M184 24 V16 M196 24 V28 M208 24 V18" stroke="#e37bff" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <figcaption><strong>Recording studio</strong>A waveform travels the cable and the cue light blooms.</figcaption>
+      </figure></li>
+      <li><figure>
+        <div class="swatch orbit" aria-hidden="true">
+          <svg viewBox="0 0 220 48">
+            <path d="M12 24 H200" fill="none" stroke="#9ec9ff" stroke-width="2" stroke-dasharray="3 6"/>
+            <circle cx="108" cy="24" r="5" fill="#d6e8ff"/>
+            <circle cx="200" cy="24" r="8" fill="none" stroke="#9ec9ff" stroke-width="2"/>
+          </svg>
+        </div>
+        <figcaption><strong>Orbital tug</strong>A bead runs the tether and flares as it docks.</figcaption>
+      </figure></li>
+      <li><figure>
+        <div class="swatch holiday" aria-hidden="true">
+          <svg viewBox="0 0 220 48">
+            <circle cx="36" cy="24" r="6" fill="#ff5a7a"/>
+            <circle cx="78" cy="18" r="5" fill="#ffd24a"/>
+            <circle cx="112" cy="28" r="6" fill="#5ee0ff"/>
+            <circle cx="154" cy="16" r="5" fill="#7ddc6a"/>
+            <circle cx="190" cy="26" r="7" fill="#e37bff"/>
+          </svg>
+        </div>
+        <figcaption><strong>Holidays</strong>Fireworks, Christmas lights, hearts, balloons, and a New Year burst.</figcaption>
+      </figure></li>
+    </ul>
+    <p class="promise">Some puzzles use pictures instead of words, or a mix of both. A snack board, a holiday icon set, a desk full of gear.</p>
+  </section>
+
+  <section class="wrap" aria-labelledby="modes-title">
+    <div class="feature">
+      <div>
+        <p class="eyebrow">Three ways to play</p>
+        <h2 id="modes-title">A daily, a library, and five Journeys</h2>
+        <ul class="modes">
+          <li><strong>Today.</strong> One official puzzle a day, the same one for everyone, with a streak that grows when you come back.</li>
+          <li><strong>Practice.</strong> Hundreds of extra puzzles. Play them untimed, or on a clock. Browse by topic and jump back to any one you've tried.</li>
+          <li><strong>Journey.</strong> Themed ladders. You clear a stage, and the next one unlocks. Twelve stages each, from everyday words up to the hardest boards in the game.</li>
+        </ul>
+      </div>
+      <ul class="journeys">
+        <li>
+          <h3>The Starting Line <span class="badge">Free</span></h3>
+          <p>Everyday connections. A good place to begin. 12 stages.</p>
+        </li>
+        <li>
+          <h3>The Workshop <span class="badge pro">Pro</span></h3>
+          <p>How things are made. Tools, cooking, and a spark-trail finale. 12 stages.</p>
+        </li>
+        <li>
+          <h3>The Wild <span class="badge pro">Pro</span></h3>
+          <p>From ocean floors to mountain peaks. The glasshouse is the last stage. 12 stages.</p>
+        </li>
+        <li>
+          <h3>The Lab <span class="badge pro">Pro</span></h3>
+          <p>Science is matching what you measure to what it means. Circuits and orbits. 12 stages.</p>
+        </li>
+        <li>
+          <h3>The Studio <span class="badge pro">Pro</span></h3>
+          <p>Art, music, and performance. The hardest things to categorize. 12 stages.</p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="wrap" aria-labelledby="extras-title">
+    <p class="eyebrow">The little things</p>
+    <h2 id="extras-title">Short rounds, with room to get stuck</h2>
+    <ul class="extras">
+      <li>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3 11c.5.5 1 1.2 1 2h4c0-.8.5-1.5 1-2a6 6 0 0 0-3-11z"/></svg>
+        <div><strong>Hints, included</strong><span>One hint on the daily, three in a Practice round, one on a Journey stage. Hints are not a separate purchase.</span></div>
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+        <div><strong>Memory challenge</strong><span>Look at the board, then the labels hide and you connect the pairs from what you remember. The wires stay visible.</span></div>
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M9 9l6 6M15 9l-6 6"/></svg>
+        <div><strong>A tile that doesn't belong</strong><span>Harder boards slip in a decoy. It looks plausible and has no partner.</span></div>
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3c2 3 6 4 6 9a6 6 0 0 1-12 0c0-5 4-6 6-9z"/></svg>
+        <div><strong>Streaks and stats</strong><span>A daily streak, your best scores, and a share of how the round went.</span></div>
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 15V9M12 15v-3M16 15V7"/></svg>
+        <div><strong>Archive</strong><span>A calendar of past dailies. The last 7 days are free. Older days open with Pro. Archive wins do not change your streak.</span></div>
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 10v4M8 7v10M12 4v16M16 8v8M20 11v2"/></svg>
+        <div><strong>Sound and haptics</strong><span>A wire landing has a click and a tap. Music and effects each have their own switch, and Reduce Motion calms the celebrations.</span></div>
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M18.4 5.6L17 7M7 17l-1.4 1.4"/></svg>
+        <div><strong>Light, Dark, or System</strong><span>The board follows the appearance you pick in Settings. A short tutorial on the real board teaches the first wires.</span></div>
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+        <div><strong>No account, no ads, no tracking</strong><span>Progress stays on the device. Nothing is sent off the phone. <a href="/crossedwires/privacy/">Privacy policy</a></span></div>
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg>
+        <div><strong>Made for iPhone</strong><span>A first-launch tutorial you can replay from Settings, and a welcome that offers Today, Practice, or Journey.</span></div>
+      </li>
+    </ul>
+  </section>
+
+  <section id="price" class="wrap" aria-labelledby="price-title">
+    <p class="eyebrow">Free to play</p>
+    <h2 id="price-title">The daily puzzle is always free</h2>
+    <p class="lede">Pro is a one-time purchase. It adds the four longer Journeys and the rest of the archive.</p>
+    <div class="plans">
+      <div class="plan">
+        <h3>Free <span class="price">forever</span></h3>
+        <ul>
+          <li>Today's puzzle, every day</li>
+          <li>Streaks, stats, and sharing</li>
+          <li>The practice library, classic or timed</li>
+          <li>The Starting Line, all 12 stages</li>
+          <li>The last 7 days of the archive</li>
+          <li>Hints, the tutorial, and memory challenge</li>
+        </ul>
+      </div>
+      <div class="plan pro">
+        <h3>Crossed Wires Pro <span class="price">$4.99 once</span></h3>
+        <ul>
+          <li>The Workshop, The Wild, The Lab, and The Studio</li>
+          <li>48 more stages, including the showpiece wire effects</li>
+          <li>Every past daily in the archive</li>
+          <li>Restore Purchases if you reinstall</li>
+        </ul>
+      </div>
+    </div>
+    <p class="promise">One purchase. The daily stays free. There are no ads and no subscription.</p>
+  </section>
+
+  <section id="beta" class="wrap" aria-labelledby="beta-title">
+    <div class="beta">
+      <p class="eyebrow">Early testing</p>
+      <h2 id="beta-title">Not on the App Store yet</h2>
+      <p class="lede">Crossed Wires is in early testing. If you'd like a build, or you have a question, send a note. I'd like to know what is confusing, what is fun, and which puzzles feel unfair.</p>
+      <div class="actions">
+        <a class="btn btn-primary" href="mailto:ddworkin.apps@icloud.com?subject=Crossed%20Wires%3A%20I%27d%20like%20to%20try%20it&amp;body=Hi%20David%2C%0A%0AI%27d%20like%20to%20try%20Crossed%20Wires.%0A%0AMy%20name%3A%20%0A">Email ddworkin.apps@icloud.com</a>
+      </div>
+    </div>
+  </section>
+
 </main>
+
+<footer class="wrap">
+  <nav aria-label="Crossed Wires links">
+    <a href="/crossedwires/privacy/">Privacy</a>
+    <a href="/crossedwires/support/">Support</a>
+    <a href="/">More apps</a>
+  </nav>
+  <p>© 2026 David Dworkin. The board at the top is an illustration, not a screenshot.</p>
+</footer>
 </body>
 </html>
